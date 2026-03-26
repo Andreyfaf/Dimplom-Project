@@ -1,16 +1,108 @@
-# React + Vite
+# 🏭 Gidrobas — Дипломный проект
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 📌 Описание проекта
 
-Currently, two official plugins are available:
+Данный проект представляет собой веб-сайт компании **Gidrobas**, занимающейся производством и продажей гидравлических комплектующих для спецтехники.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Сайт разработан в рамках дипломной работы и предназначен для:
 
-## React Compiler
+* демонстрации продукции
+* ознакомления клиентов с компанией
+* предоставления контактной информации
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## 🚀 Используемые технологии
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+* **React (Vite)** — фронтенд
+* **JavaScript (ES6)** — логика приложения
+* **CSS3** — стилизация интерфейса
+* **HTML5** — структура страниц
+
+---
+
+## 🧩 Структура проекта
+
+```
+src/
+ ├── components/
+ │    ├── Header.jsx      // Шапка сайта
+ │    ├── Hero.jsx        // Главный экран
+ │    ├── Catalog.jsx     // Каталог товаров
+ │    ├── ProductCard.jsx // Карточка товара
+ │    ├── Contacts.jsx    // Контакты
+ │    ├── Footer.jsx      // Подвал с видео
+ │
+ ├── assets/              // Изображения и видео
+ ├── App.jsx              // Основной компонент
+ ├── main.jsx             // Точка входа
+```
+
+---
+
+## 📦 Функционал сайта
+
+### 🔹 Каталог товаров
+
+* Отображение гидравлических комплектующих
+* Карточки с изображением и описанием
+
+### 🔹 Контакты
+
+* Информация о сотрудниках
+* Способы связи
+
+### 🔹 Видео о компании
+
+* Ознакомительное видео в footer
+
+---
+
+## 🖥️ Установка и запуск проекта
+
+### 1. Установить зависимости
+
+```bash
+npm install
+```
+
+### 2. Запустить проект
+
+```bash
+npm run dev
+```
+
+### 3. Открыть в браузере
+
+```
+http://localhost:5173
+```
+
+---
+
+## 📁 Ресурсы
+
+В проекте используются:
+
+* изображения продукции
+* логотип компании
+* видео (ознакомление с процессом работы)
+
+---
+
+## 🎯 Цель проекта
+
+Создать современный и удобный интерфейс для демонстрации продукции компании с использованием React.
+
+---
+
+## 👨‍💻 Автор
+
+Фафонов Андрей Константинович
+(тут можешь вписать своё имя)
+
+---
+
+## 📄 Лицензия
+
+Проект создан в учебных целях.
