@@ -5,7 +5,7 @@ const Footer = () => {
   return (
     <footer className="footer">
       <div className="container footer-content">
-        <p>© 2025 Gidrobas. Все права защищены.</p>
+        <p>© 2026 Gidrobas. Все права защищены.</p>
         <div className="footer-video">
           <video controls width="400" muted>
             <source src={video} type="video/mp4" />
