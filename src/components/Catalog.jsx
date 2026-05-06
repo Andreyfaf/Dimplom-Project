@@ -35,7 +35,28 @@ const products = [
   }
 ];
 
-const Catalog = () => {
+const Catalog = ({ currentUser }) => {
+  const addToCart = (product) => {
+    if (!currentUser) {
+      alert("⚠️ Для добавления в корзину необходимо войти в аккаунт!");
+      return;
+    }
+
+    const cartKey = `cart_${currentUser.id}`;
+    const savedCart = localStorage.getItem(cartKey);
+    const cart = savedCart ? JSON.parse(savedCart) : [];
+    
+    cart.push({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      addedAt: new Date().toISOString()
+    });
+    
+    localStorage.setItem(cartKey, JSON.stringify(cart));
+    alert(`✓ ${product.name} добавлен в корзину!`);
+  };
+
   return (
     <section id="catalog" className="catalog">
       <div className="container">
@@ -43,11 +64,19 @@ const Catalog = () => {
         <div className="products-grid">
           {products.map(product => (
             <div className="product-card" key={product.id}>
-              <img src={product.img} alt={product.name} />
+              <div className="product-image">
+                <img src={product.img} alt={product.name} />
+              </div>
               <div className="product-info">
                 <h3>{product.name}</h3>
-                <p>{product.description}</p>
+                <p className="product-description">{product.description}</p>
                 <p className="price">{product.price}</p>
+                <button 
+                  className="add-to-cart-btn"
+                  onClick={() => addToCart(product)}
+                >
+                  🛒 В корзину
+                </button>
               </div>
             </div>
           ))}

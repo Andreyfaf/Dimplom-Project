@@ -1,7 +1,13 @@
 import React from "react";
 import emblem from "../assets/emblem.jpg";
 
-const Header = ({ setPage }) => {
+const Header = ({ setPage, currentUser, setCurrentUser, openAuthModal }) => {
+
+  const handleLogout = () => {
+    localStorage.removeItem("currentUser");
+    setCurrentUser(null);
+    setPage("home");
+  };
 
   const goHome = () => setPage("home");
 
@@ -32,17 +38,23 @@ const Header = ({ setPage }) => {
         {/* Навигация */}
         <nav>
           <button onClick={goCatalog}>Каталог</button>
+          <button onClick={() => setPage("repair")}>Ремонт</button>  {/* ← вот сюда добавить */}
           <button onClick={goContacts}>Контакты</button>
-
-          <button onClick={() => setPage("cart")}>
-            Корзина
-          </button>
+          <button onClick={() => setPage("cart")}>Корзина</button>
+          
+          {currentUser ? (
+            <div className="user-info">
+              <span className="user-name">👤 {currentUser.name || currentUser.email.split('@')[0]}</span>
+              <button onClick={handleLogout} className="logout-btn">Выйти</button>
+            </div>
+          ) : (
+            <button onClick={openAuthModal} className="auth-btn">Вход / Регистрация</button>
+          )}
         </nav>
 
       </div>
     </header>
   );
 };
-
 
 export default Header;
