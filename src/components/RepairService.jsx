@@ -48,7 +48,7 @@ const RepairService = ({ currentUser }) => {
     e.preventDefault();
     
     if (!currentUser) {
-      alert("⚠️ Для отправки заявки необходимо войти в аккаунт");
+       console.log("⚠️ Для отправки заявки необходимо войти в аккаунт");
       return;
     }
     
@@ -65,7 +65,7 @@ const RepairService = ({ currentUser }) => {
     requests.push(repairRequest);
     localStorage.setItem(`repair_requests_${currentUser.id}`, JSON.stringify(requests));
     
-    alert(`✓ Заявка отправлена!\nГород: ${formData.city}\nМы свяжемся с вами`);
+    console.log(`✓ Заявка отправлена!\nГород: ${formData.city}\nМы свяжемся с вами`);
     
     setSelectedService(null);
     setFormData({ name: "", phone: "", city: "Актау", problem: "" });
