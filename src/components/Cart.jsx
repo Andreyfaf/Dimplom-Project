@@ -67,7 +67,7 @@ const Cart = ({ currentUser }) => {
     setShowOrderForm(false);
     setOrderData({ name: "", phone: "", address: "" });
     
-    alert(`Заказ оформлен!\nСумма: ${totalSum} ₽\nНомер заказа: ${order.id}`);
+    console.log(`Заказ оформлен!\nСумма: ${totalSum} ₽\nНомер заказа: ${order.id}`);
   };
 
   if (showOrderForm) {
