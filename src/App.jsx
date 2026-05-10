@@ -49,7 +49,7 @@ function App() {
 
   const addToCart = (product) => {
     if (!currentUser) {
-      alert("⚠️ Для добавления в корзину необходимо войти в аккаунт!");
+      alert("Для добавления в корзину необходимо войти в аккаунт!");
       openAuthModal();
       return;
     }
@@ -66,7 +66,7 @@ function App() {
     });
     
     localStorage.setItem(cartKey, JSON.stringify(cart));
-    alert(`✓ ${product.name} добавлен в корзину!`);
+    alert(`${product.name} добавлен в корзину!`);
   };
 
   return (
@@ -84,15 +84,13 @@ function App() {
         onLogin={handleLogin}
       />
       
-      {/* ГЛАВНАЯ СТРАНИЦА (без каталога) */}
       {page === "home" && (
         <>
-          <Hero setPage={setPage} />  {/* ← ИЗМЕНЕНО: передаём setPage */}
+          <Hero setPage={setPage} />
           <Contacts />
         </>
       )}
 
-      {/* СТРАНИЦА КАТАЛОГА */}
       {page === "catalog" && (
         <CatalogPage 
           currentUser={currentUser}
@@ -100,7 +98,6 @@ function App() {
         />
       )}
 
-      {/* СТРАНИЦА ТОВАРА */}
       {page === "product" && (
         <ProductPage 
           product={selectedProduct}
@@ -110,12 +107,10 @@ function App() {
         />
       )}
 
-      {/* СТРАНИЦА РЕМОНТА */}
       {page === "repair" && (
         <RepairService currentUser={currentUser} />
       )}
 
-      {/* СТРАНИЦА КОРЗИНЫ */}
       {page === "cart" && (
         <Cart 
           currentUser={currentUser} 

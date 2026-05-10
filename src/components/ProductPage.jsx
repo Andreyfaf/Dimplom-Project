@@ -41,7 +41,7 @@ const ProductPage = ({ product, onAddToCart, onBack, currentUser }) => {
     <div className="product-page">
       <div className="container">
         <button onClick={onBack} className="back-btn">
-          ← Назад к каталогу
+          Назад к каталогу
         </button>
 
         <div className="product-page-content">
@@ -53,18 +53,18 @@ const ProductPage = ({ product, onAddToCart, onBack, currentUser }) => {
             <h1>{product.name}</h1>
             
             <div className="product-date">
-              📅 Добавлен в каталог: {createdDate.toLocaleDateString('ru-RU')}
+              Добавлен в каталог: {createdDate.toLocaleDateString('ru-RU')}
             </div>
 
             <div className="product-page-price">{product.price}</div>
 
             <div className="product-purpose">
-              <h3>🎯 Для чего нужен:</h3>
+              <h3>Для чего нужен:</h3>
               <p>{rec.purpose}</p>
             </div>
 
             <div className="product-description">
-              <h3>📝 Описание:</h3>
+              <h3>Описание:</h3>
               <p>
                 {showFullDescription 
                   ? `${product.description} ${rec.tips} ${rec.care}` 
@@ -79,11 +79,11 @@ const ProductPage = ({ product, onAddToCart, onBack, currentUser }) => {
             </div>
 
             <div className="product-recommendations">
-              <h3>💡 Рекомендации:</h3>
+              <h3>Рекомендации:</h3>
               <ul>
-                <li>🔧 {rec.tips}</li>
-                <li>🛡️ {rec.warranty}</li>
-                <li>📦 {rec.care}</li>
+                <li>{rec.tips}</li>
+                <li>{rec.warranty}</li>
+                <li>{rec.care}</li>
               </ul>
             </div>
 
@@ -91,19 +91,19 @@ const ProductPage = ({ product, onAddToCart, onBack, currentUser }) => {
               className="add-to-cart-page-btn"
               onClick={() => onAddToCart(product)}
             >
-              🛒 Добавить в корзину - {product.price}
+              Добавить в корзину - {product.price}
             </button>
 
             {!currentUser && (
               <p className="login-hint">
-                🔐 Войдите в аккаунт, чтобы добавить товар в корзину
+                Войдите в аккаунт, чтобы добавить товар в корзину
               </p>
             )}
           </div>
         </div>
 
         <div className="product-specs">
-          <h3>📊 Технические характеристики:</h3>
+          <h3>Технические характеристики:</h3>
           <table className="specs-table">
             <tbody>
               <tr>

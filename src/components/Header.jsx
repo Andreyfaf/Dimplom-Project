@@ -11,7 +11,7 @@ const Header = ({ setPage, currentUser, setCurrentUser, openAuthModal }) => {
 
   const goHome = () => setPage("home");
 
-  const goCatalog = () => setPage("catalog"); // ← теперь переход на страницу каталога
+  const goCatalog = () => setPage("catalog");
 
   const goContacts = () => {
     setPage("home");
@@ -35,12 +35,11 @@ const Header = ({ setPage, currentUser, setCurrentUser, openAuthModal }) => {
           <button onClick={() => setPage("repair")}>Ремонт</button>
           <button onClick={goContacts}>Контакты</button>
           
-          {/* Корзина только для авторизованных */}
           {currentUser && <button onClick={() => setPage("cart")}>Корзина</button>}
           
           {currentUser ? (
             <div className="user-info">
-              <span className="user-name">👤 {currentUser.name || currentUser.email.split('@')[0]}</span>
+              <span className="user-name">{currentUser.name || currentUser.email.split('@')[0]}</span>
               <button onClick={handleLogout} className="logout-btn">Выйти</button>
             </div>
           ) : (

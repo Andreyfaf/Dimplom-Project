@@ -1,9 +1,9 @@
 import React from "react";
 import workProcess from "../assets/work-process.jpg";
 
-const Hero = ({ setPage }) => {  // ← добавить setPage в пропсы
+const Hero = ({ setPage }) => {
   const goToCatalog = () => {
-    setPage("catalog");  // ← переключаем на страницу каталога
+    setPage("catalog");
   };
 
   return (

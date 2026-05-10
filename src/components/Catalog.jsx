@@ -9,7 +9,7 @@ const products = [
     id: 1,
     name: "Гидроцилиндр экскаватора",
     img: cilender,
-    fits: "🚜 Подходит для: ЭО-2621, ЭО-3322, JCB, Hyundai",
+    fits: "Подходит для: ЭО-2621, ЭО-3322, JCB, Hyundai",
     description: "Ход штока: 1200 мм | Усилие: 25 т",
     price: "25 000 ₽"
   },
@@ -17,7 +17,7 @@ const products = [
     id: 2,
     name: "Гидроцилиндр пресса",
     img: press,
-    fits: "🏭 Для гидравлических прессов П-125, П-250",
+    fits: "Для гидравлических прессов П-125, П-250",
     description: "Ход штока: 800 мм | Усилие: 40 т",
     price: "18 000 ₽"
   },
@@ -25,7 +25,7 @@ const products = [
     id: 3,
     name: "Комплектующие для спецтехники",
     img: complect,
-    fits: "🔧 Кольца, поршни, втулки — любые размеры",
+    fits: "Кольца, поршни, втулки - любые размеры",
     description: "Для экскаваторов, погрузчиков, бульдозеров",
     price: "от 5 000 ₽"
   },
@@ -33,7 +33,7 @@ const products = [
     id: 4,
     name: "Манжеты и уплотнения",
     img: cuffs,
-    fits: "🛡️ DN 40-200 мм, все типоразмеры",
+    fits: "DN 40-200 мм, все типоразмеры",
     description: "Для гидроцилиндров разных моделей",
     price: "от 500 ₽"
   }
@@ -44,7 +44,7 @@ const Catalog = ({ currentUser, onProductClick }) => {
     e.stopPropagation();
     
     if (!currentUser) {
-      alert("⚠️ Для добавления в корзину необходимо войти в аккаунт!");
+      alert("Для добавления в корзину необходимо войти в аккаунт!");
       return;
     }
 
@@ -60,7 +60,7 @@ const Catalog = ({ currentUser, onProductClick }) => {
     });
     
     localStorage.setItem(cartKey, JSON.stringify(cart));
-    alert(`✓ ${product.name} добавлен в корзину!`);
+    alert(`${product.name} добавлен в корзину!`);
   };
 
   return (
@@ -84,7 +84,7 @@ const Catalog = ({ currentUser, onProductClick }) => {
               className="add-to-cart-btn"
               onClick={(e) => addToCart(product, e)}
             >
-              🛒 В корзину
+              В корзину
             </button>
           </div>
         </div>

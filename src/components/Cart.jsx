@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const Cart = ({ currentUser }) => {
+const Cart = ({ currentUser, openAuthModal }) => {
   const [cartItems, setCartItems] = useState([]);
   const [showOrderForm, setShowOrderForm] = useState(false);
   const [orderData, setOrderData] = useState({
@@ -9,15 +9,14 @@ const Cart = ({ currentUser }) => {
     address: ""
   });
 
-  //  ПРОВЕРКА АВТОРИЗАЦИИ В НАЧАЛЕ
   if (!currentUser) {
     return (
       <div style={{ padding: "100px 0", textAlign: "center" }}>
         <div className="container">
-          <h2>🔒 Корзина доступна только авторизованным пользователям</h2>
+          <h2>Корзина доступна только авторизованным пользователям</h2>
           <p>Войдите или зарегистрируйтесь, чтобы добавлять товары и оформлять заказы</p>
           <button 
-            onClick={() => window.location.reload()}
+            onClick={openAuthModal}
             className="auth-btn"
             style={{ marginTop: "20px", padding: "12px 24px" }}
           >
@@ -29,7 +28,6 @@ const Cart = ({ currentUser }) => {
   }
 
   useEffect(() => {
-    //  ТОЛЬКО ДЛЯ АВТОРИЗОВАННЫХ
     const saved = localStorage.getItem(`cart_${currentUser.id}`);
     if (saved) setCartItems(JSON.parse(saved));
   }, [currentUser]);
@@ -72,8 +70,7 @@ const Cart = ({ currentUser }) => {
     setShowOrderForm(false);
     setOrderData({ name: "", phone: "", address: "" });
     
-    // ✅ alert вместо console.log
-    alert(`✅ Заказ оформлен!\n📦 Сумма: ${totalSum} ₽\n🔢 Номер заказа: ${order.id}`);
+    alert(`Заказ оформлен!\nСумма: ${totalSum} ₽\nНомер заказа: ${order.id}`);
   };
 
   if (showOrderForm) {
@@ -170,7 +167,6 @@ const Cart = ({ currentUser }) => {
   );
 };
 
-// Компонент истории заказов
 const OrderHistory = ({ userId }) => {
   const [orders, setOrders] = useState([]);
   
@@ -183,7 +179,7 @@ const OrderHistory = ({ userId }) => {
   
   return (
     <div className="order-history">
-      <h2>📋 Мои заказы</h2>
+      <h2>Мои заказы</h2>
       {orders.map((order) => (
         <div key={order.id} className="order-item">
           <div>

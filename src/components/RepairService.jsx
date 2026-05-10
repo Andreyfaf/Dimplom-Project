@@ -15,32 +15,28 @@ const RepairService = ({ currentUser }) => {
       name: "Диагностика",
       description: "Полная проверка гидроцилиндра, выявление неисправностей",
       price: "1 500 ₽",
-      time: "1-2 дня",
-      popular: true
+      time: "1-2 дня"
     },
     {
       id: 2,
       name: "Замена уплотнений",
       description: "Замена манжет, колец и всех уплотнителей",
       price: "3 000 ₽",
-      time: "2-3 дня",
-      popular: false
+      time: "2-3 дня"
     },
     {
       id: 3,
       name: "Ремонт штока",
       description: "Восстановление хромированного покрытия, шлифовка",
       price: "от 5 000 ₽",
-      time: "3-5 дней",
-      popular: true
+      time: "3-5 дней"
     },
     {
       id: 4,
       name: "Капитальный ремонт",
       description: "Полное восстановление с заменой всех изношенных деталей",
       price: "от 15 000 ₽",
-      time: "10-14 дней",
-      popular: false
+      time: "10-14 дней"
     }
   ];
 
@@ -48,7 +44,7 @@ const RepairService = ({ currentUser }) => {
     e.preventDefault();
     
     if (!currentUser) {
-      console.log("⚠️ Для отправки заявки необходимо войти в аккаунт");
+      alert("Для отправки заявки необходимо войти в аккаунт");
       return;
     }
     
@@ -65,7 +61,7 @@ const RepairService = ({ currentUser }) => {
     requests.push(repairRequest);
     localStorage.setItem(`repair_requests_${currentUser.id}`, JSON.stringify(requests));
     
-    console.log(`✅ Заявка отправлена!\n📍 Город: ${formData.city}\n📞 Мы свяжемся с вами`);
+    alert(`Заявка отправлена!\nГород: ${formData.city}\nМы свяжемся с вами`);
     
     setSelectedService(null);
     setFormData({ name: "", phone: "", city: "Актау", problem: "" });
@@ -76,7 +72,7 @@ const RepairService = ({ currentUser }) => {
       <div className="repair-form-page">
         <div className="container">
           <button onClick={() => setSelectedService(null)} className="back-btn">
-            ← Назад к услугам
+            Назад к услугам
           </button>
           
           <div className="repair-form-container">
@@ -113,8 +109,8 @@ const RepairService = ({ currentUser }) => {
                   value={formData.city}
                   onChange={(e) => setFormData({...formData, city: e.target.value})}
                 >
-                  <option value="Актау">🇰🇿 Актау</option>
-                  <option value="Атырау">🇰🇿 Атырау</option>
+                  <option value="Актау">Актау</option>
+                  <option value="Атырау">Атырау</option>
                 </select>
               </div>
               
@@ -141,11 +137,11 @@ const RepairService = ({ currentUser }) => {
   return (
     <section className="repair-service">
       <div className="container">
-        <h2>🔧 Ремонт гидроцилиндров</h2>
+        <h2>Ремонт гидроцилиндров</h2>
         <p className="repair-subtitle">Профессиональный ремонт с гарантией 12 месяцев</p>
         
         <div className="cities-block">
-          <div className="cities-title">📍 Работаем в городах:</div>
+          <div className="cities-title">Работаем в городах:</div>
           <div className="cities-tags">
             <span className="city-tag">Актау</span>
             <span className="city-tag">Атырау</span>
@@ -155,11 +151,10 @@ const RepairService = ({ currentUser }) => {
         <div className="repair-grid">
           {repairServices.map(service => (
             <div className="repair-card" key={service.id}>
-              {service.popular && <div className="popular-tag">Популярный</div>}
               <h3>{service.name}</h3>
               <p>{service.description}</p>
               <div className="repair-price">{service.price}</div>
-              <div className="repair-time">⏱ {service.time}</div>
+              <div className="repair-time">{service.time}</div>
               <button 
                 className="repair-order-btn"
                 onClick={() => setSelectedService(service)}
@@ -168,25 +163,6 @@ const RepairService = ({ currentUser }) => {
               </button>
             </div>
           ))}
-        </div>
-        
-        <div className="advantages-block">
-          <div className="advantage-item">
-            <span>✅</span>
-            <p>Гарантия 12 месяцев</p>
-          </div>
-          <div className="advantage-item">
-            <span>🔧</span>
-            <p>Оригинальные запчасти</p>
-          </div>
-          <div className="advantage-item">
-            <span>⚡</span>
-            <p>Срочный ремонт</p>
-          </div>
-          <div className="advantage-item">
-            <span>🚚</span>
-            <p>Выезд мастера</p>
-          </div>
         </div>
       </div>
     </section>

@@ -18,7 +18,6 @@ const AuthModal = ({ isOpen, onClose, onLogin }) => {
     setError("");
   };
 
-  // Функция для переноса корзины гостя
   const transferGuestCart = (userId) => {
     const guestCart = localStorage.getItem("cart_guest");
     if (guestCart) {
@@ -26,7 +25,6 @@ const AuthModal = ({ isOpen, onClose, onLogin }) => {
       if (guestItems.length > 0) {
         localStorage.setItem(`cart_${userId}`, JSON.stringify(guestItems));
         localStorage.removeItem("cart_guest");
-        console.log(`🛒 Корзина перенесена! У вас ${guestItems.length} товаров.`);
       }
     }
   };
@@ -39,7 +37,7 @@ const AuthModal = ({ isOpen, onClose, onLogin }) => {
       const user = users.find(u => u.email === formData.email && u.password === formData.password);
       
       if (user) {
-        transferGuestCart(user.id); // ← перенос корзины
+        transferGuestCart(user.id);
         localStorage.setItem("currentUser", JSON.stringify(user));
         onLogin(user);
         onClose();
@@ -80,7 +78,7 @@ const AuthModal = ({ isOpen, onClose, onLogin }) => {
       
       users.push(newUser);
       localStorage.setItem("users", JSON.stringify(users));
-      transferGuestCart(newUser.id); // ← перенос корзины
+      transferGuestCart(newUser.id);
       localStorage.setItem("currentUser", JSON.stringify(newUser));
       onLogin(newUser);
       onClose();
@@ -96,7 +94,6 @@ const AuthModal = ({ isOpen, onClose, onLogin }) => {
         <button className="auth-modal-close" onClick={onClose}>×</button>
         
         <div className="auth-modal-header">
-          <div className="auth-modal-icon">🔐</div>
           <h2>{isLogin ? "Вход в аккаунт" : "Регистрация"}</h2>
           <p>{isLogin ? "Войдите в свой аккаунт" : "Создайте новый аккаунт"}</p>
         </div>
