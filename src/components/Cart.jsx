@@ -9,33 +9,40 @@ const Cart = ({ currentUser }) => {
     address: ""
   });
 
+  //  ПРОВЕРКА АВТОРИЗАЦИИ В НАЧАЛЕ
+  if (!currentUser) {
+    return (
+      <div style={{ padding: "100px 0", textAlign: "center" }}>
+        <div className="container">
+          <h2>🔒 Корзина доступна только авторизованным пользователям</h2>
+          <p>Войдите или зарегистрируйтесь, чтобы добавлять товары и оформлять заказы</p>
+          <button 
+            onClick={() => window.location.reload()}
+            className="auth-btn"
+            style={{ marginTop: "20px", padding: "12px 24px" }}
+          >
+            Войти / Зарегистрироваться
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   useEffect(() => {
-    if (currentUser) {
-      const saved = localStorage.getItem(`cart_${currentUser.id}`);
-      if (saved) setCartItems(JSON.parse(saved));
-    } else {
-      const saved = localStorage.getItem("cart_guest");
-      if (saved) setCartItems(JSON.parse(saved));
-    }
+    //  ТОЛЬКО ДЛЯ АВТОРИЗОВАННЫХ
+    const saved = localStorage.getItem(`cart_${currentUser.id}`);
+    if (saved) setCartItems(JSON.parse(saved));
   }, [currentUser]);
 
   const removeItem = (index) => {
     const newCart = [...cartItems];
     newCart.splice(index, 1);
-    if (currentUser) {
-      localStorage.setItem(`cart_${currentUser.id}`, JSON.stringify(newCart));
-    } else {
-      localStorage.setItem("cart_guest", JSON.stringify(newCart));
-    }
+    localStorage.setItem(`cart_${currentUser.id}`, JSON.stringify(newCart));
     setCartItems(newCart);
   };
 
   const clearCart = () => {
-    if (currentUser) {
-      localStorage.setItem(`cart_${currentUser.id}`, JSON.stringify([]));
-    } else {
-      localStorage.setItem("cart_guest", JSON.stringify([]));
-    }
+    localStorage.setItem(`cart_${currentUser.id}`, JSON.stringify([]));
     setCartItems([]);
   };
 
@@ -49,7 +56,7 @@ const Cart = ({ currentUser }) => {
     
     const order = {
       id: Date.now(),
-      userId: currentUser?.id,
+      userId: currentUser.id,
       items: cartItems,
       total: totalSum,
       ...orderData,
@@ -57,17 +64,16 @@ const Cart = ({ currentUser }) => {
       status: "новый"
     };
     
-    // Сохраняем заказ
-    const orders = JSON.parse(localStorage.getItem(`orders_${currentUser?.id || "guest"}`) || "[]");
+    const orders = JSON.parse(localStorage.getItem(`orders_${currentUser.id}`) || "[]");
     orders.push(order);
-    localStorage.setItem(`orders_${currentUser?.id || "guest"}`, JSON.stringify(orders));
+    localStorage.setItem(`orders_${currentUser.id}`, JSON.stringify(orders));
     
-    // Очищаем корзину
     clearCart();
     setShowOrderForm(false);
     setOrderData({ name: "", phone: "", address: "" });
     
-    console.log(`Заказ оформлен!\nСумма: ${totalSum} ₽\nНомер заказа: ${order.id}`);
+    // ✅ alert вместо console.log
+    alert(`✅ Заказ оформлен!\n📦 Сумма: ${totalSum} ₽\n🔢 Номер заказа: ${order.id}`);
   };
 
   if (showOrderForm) {
@@ -125,12 +131,6 @@ const Cart = ({ currentUser }) => {
       <div className="container">
         <h1>Корзина ({cartItems.length})</h1>
         
-        {!currentUser && cartItems.length > 0 && (
-          <div className="warning-message">
-            ⚠️ Войдите в аккаунт, чтобы оформить заказ
-          </div>
-        )}
-        
         {cartItems.length === 0 ? (
           <p>Корзина пуста</p>
         ) : (
@@ -156,7 +156,6 @@ const Cart = ({ currentUser }) => {
                 <button 
                   onClick={() => setShowOrderForm(true)} 
                   className="order-btn"
-                  disabled={!currentUser}
                 >
                   Оформить заказ
                 </button>
@@ -165,10 +164,7 @@ const Cart = ({ currentUser }) => {
           </>
         )}
         
-        {/* История заказов */}
-        {currentUser && (
-          <OrderHistory userId={currentUser.id} />
-        )}
+        <OrderHistory userId={currentUser.id} />
       </div>
     </div>
   );
@@ -187,7 +183,7 @@ const OrderHistory = ({ userId }) => {
   
   return (
     <div className="order-history">
-      <h2>Мои заказы</h2>
+      <h2>📋 Мои заказы</h2>
       {orders.map((order) => (
         <div key={order.id} className="order-item">
           <div>

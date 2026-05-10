@@ -9,27 +9,31 @@ const products = [
     id: 1,
     name: "Гидроцилиндр экскаватора",
     img: cilender,
-    description: "Ход штока: 1200 мм",
+    fits: "🚜 Подходит для: ЭО-2621, ЭО-3322, JCB, Hyundai",
+    description: "Ход штока: 1200 мм | Усилие: 25 т",
     price: "25 000 ₽"
   },
   {
     id: 2,
     name: "Гидроцилиндр пресса",
     img: press,
-    description: "Ход штока: 800 мм",
+    fits: "🏭 Для гидравлических прессов П-125, П-250",
+    description: "Ход штока: 800 мм | Усилие: 40 т",
     price: "18 000 ₽"
   },
   {
     id: 3,
-    name: "Комплектующие",
+    name: "Комплектующие для спецтехники",
     img: complect,
-    description: "Разные детали для гидроцилиндров",
+    fits: "🔧 Кольца, поршни, втулки — любые размеры",
+    description: "Для экскаваторов, погрузчиков, бульдозеров",
     price: "от 5 000 ₽"
   },
   {
     id: 4,
     name: "Манжеты и уплотнения",
     img: cuffs,
+    fits: "🛡️ DN 40-200 мм, все типоразмеры",
     description: "Для гидроцилиндров разных моделей",
     price: "от 500 ₽"
   }
@@ -38,7 +42,7 @@ const products = [
 const Catalog = ({ currentUser }) => {
   const addToCart = (product) => {
     if (!currentUser) {
-      alert("⚠️ Для добавления в корзину необходимо войти в аккаунт!");
+      console.log("⚠️ Для добавления в корзину необходимо войти в аккаунт!");
       return;
     }
 
@@ -54,7 +58,7 @@ const Catalog = ({ currentUser }) => {
     });
     
     localStorage.setItem(cartKey, JSON.stringify(cart));
-    alert(`✓ ${product.name} добавлен в корзину!`);
+    console.log(`✓ ${product.name} добавлен в корзину!`);
   };
 
   return (
@@ -69,6 +73,7 @@ const Catalog = ({ currentUser }) => {
               </div>
               <div className="product-info">
                 <h3>{product.name}</h3>
+                <p className="product-fits">{product.fits}</p>
                 <p className="product-description">{product.description}</p>
                 <p className="price">{product.price}</p>
                 <button 

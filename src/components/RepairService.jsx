@@ -48,7 +48,7 @@ const RepairService = ({ currentUser }) => {
     e.preventDefault();
     
     if (!currentUser) {
-       console.log("⚠️ Для отправки заявки необходимо войти в аккаунт");
+      console.log("⚠️ Для отправки заявки необходимо войти в аккаунт");
       return;
     }
     
@@ -65,7 +65,7 @@ const RepairService = ({ currentUser }) => {
     requests.push(repairRequest);
     localStorage.setItem(`repair_requests_${currentUser.id}`, JSON.stringify(requests));
     
-    console.log(`✓ Заявка отправлена!\nГород: ${formData.city}\nМы свяжемся с вами`);
+    console.log(`✅ Заявка отправлена!\n📍 Город: ${formData.city}\n📞 Мы свяжемся с вами`);
     
     setSelectedService(null);
     setFormData({ name: "", phone: "", city: "Актау", problem: "" });
@@ -144,7 +144,6 @@ const RepairService = ({ currentUser }) => {
         <h2>🔧 Ремонт гидроцилиндров</h2>
         <p className="repair-subtitle">Профессиональный ремонт с гарантией 12 месяцев</p>
         
-        {/* Города */}
         <div className="cities-block">
           <div className="cities-title">📍 Работаем в городах:</div>
           <div className="cities-tags">
@@ -153,7 +152,6 @@ const RepairService = ({ currentUser }) => {
           </div>
         </div>
         
-        {/* Услуги */}
         <div className="repair-grid">
           {repairServices.map(service => (
             <div className="repair-card" key={service.id}>
@@ -172,7 +170,6 @@ const RepairService = ({ currentUser }) => {
           ))}
         </div>
         
-        {/* Преимущества */}
         <div className="advantages-block">
           <div className="advantage-item">
             <span>✅</span>

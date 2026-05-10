@@ -18,6 +18,19 @@ const AuthModal = ({ isOpen, onClose, onLogin }) => {
     setError("");
   };
 
+  // Функция для переноса корзины гостя
+  const transferGuestCart = (userId) => {
+    const guestCart = localStorage.getItem("cart_guest");
+    if (guestCart) {
+      const guestItems = JSON.parse(guestCart);
+      if (guestItems.length > 0) {
+        localStorage.setItem(`cart_${userId}`, JSON.stringify(guestItems));
+        localStorage.removeItem("cart_guest");
+        console.log(`🛒 Корзина перенесена! У вас ${guestItems.length} товаров.`);
+      }
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     
@@ -26,6 +39,7 @@ const AuthModal = ({ isOpen, onClose, onLogin }) => {
       const user = users.find(u => u.email === formData.email && u.password === formData.password);
       
       if (user) {
+        transferGuestCart(user.id); // ← перенос корзины
         localStorage.setItem("currentUser", JSON.stringify(user));
         onLogin(user);
         onClose();
@@ -66,6 +80,7 @@ const AuthModal = ({ isOpen, onClose, onLogin }) => {
       
       users.push(newUser);
       localStorage.setItem("users", JSON.stringify(users));
+      transferGuestCart(newUser.id); // ← перенос корзины
       localStorage.setItem("currentUser", JSON.stringify(newUser));
       onLogin(newUser);
       onClose();

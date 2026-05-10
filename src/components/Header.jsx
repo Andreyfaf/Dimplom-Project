@@ -29,18 +29,18 @@ const Header = ({ setPage, currentUser, setCurrentUser, openAuthModal }) => {
     <header className="header">
       <div className="container header-content">
 
-        {/* Лого */}
         <div className="header-left" onClick={goHome} style={{ cursor: "pointer" }}>
           <img src={emblem} alt="Логотип" className="emblem" />
           <h1>Gidrobas</h1>
         </div>
 
-        {/* Навигация */}
         <nav>
           <button onClick={goCatalog}>Каталог</button>
-          <button onClick={() => setPage("repair")}>Ремонт</button>  {/* ← вот сюда добавить */}
+          <button onClick={() => setPage("repair")}>Ремонт</button>
           <button onClick={goContacts}>Контакты</button>
-          <button onClick={() => setPage("cart")}>Корзина</button>
+          
+          {/*  Корзина только для авторизованных */}
+          {currentUser && <button onClick={() => setPage("cart")}>Корзина</button>}
           
           {currentUser ? (
             <div className="user-info">
