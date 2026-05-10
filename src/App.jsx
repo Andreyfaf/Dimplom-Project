@@ -2,12 +2,13 @@ import React, { useState, useEffect } from "react";
 import Header from "./components/Header";
 import Hero from "./components/Hero";
 import Catalog from "./components/Catalog";
+import CatalogPage from "./components/CatalogPage";
 import Contacts from "./components/Contacts";
 import Footer from "./components/Footer";
 import Cart from "./components/Cart";
 import AuthModal from "./components/AuthModal";
 import ProductPage from "./components/ProductPage";
-import RepairService from "./components/RepairService"; // Добавить импорт
+import RepairService from "./components/RepairService";
 
 import "./App.css";
 
@@ -43,12 +44,12 @@ function App() {
 
   const handleBackToCatalog = () => {
     setSelectedProduct(null);
-    setPage("home");
+    setPage("catalog");
   };
 
   const addToCart = (product) => {
     if (!currentUser) {
-      console.log("⚠️ Для добавления в корзину необходимо войти в аккаунт!");
+      alert("⚠️ Для добавления в корзину необходимо войти в аккаунт!");
       openAuthModal();
       return;
     }
@@ -83,18 +84,23 @@ function App() {
         onLogin={handleLogin}
       />
       
+      {/* ГЛАВНАЯ СТРАНИЦА (без каталога) */}
       {page === "home" && (
         <>
-          <Hero />
-          <Catalog 
-            currentUser={currentUser} 
-            onProductClick={handleProductClick}
-          />
-          <RepairService currentUser={currentUser} /> {/* Добавить */}
+          <Hero setPage={setPage} />  {/* ← ИЗМЕНЕНО: передаём setPage */}
           <Contacts />
         </>
       )}
 
+      {/* СТРАНИЦА КАТАЛОГА */}
+      {page === "catalog" && (
+        <CatalogPage 
+          currentUser={currentUser}
+          onProductClick={handleProductClick}
+        />
+      )}
+
+      {/* СТРАНИЦА ТОВАРА */}
       {page === "product" && (
         <ProductPage 
           product={selectedProduct}
@@ -104,11 +110,18 @@ function App() {
         />
       )}
 
-      {page === "repair" && ( /* Добавить */
+      {/* СТРАНИЦА РЕМОНТА */}
+      {page === "repair" && (
         <RepairService currentUser={currentUser} />
       )}
 
-      {page === "cart" && <Cart currentUser={currentUser} />}
+      {/* СТРАНИЦА КОРЗИНЫ */}
+      {page === "cart" && (
+        <Cart 
+          currentUser={currentUser} 
+          openAuthModal={openAuthModal}
+        />
+      )}
 
       <Footer />
     </div>

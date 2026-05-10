@@ -11,12 +11,7 @@ const Header = ({ setPage, currentUser, setCurrentUser, openAuthModal }) => {
 
   const goHome = () => setPage("home");
 
-  const goCatalog = () => {
-    setPage("home");
-    setTimeout(() => {
-      document.getElementById("catalog")?.scrollIntoView({ behavior: "smooth" });
-    }, 100);
-  };
+  const goCatalog = () => setPage("catalog"); // ← теперь переход на страницу каталога
 
   const goContacts = () => {
     setPage("home");
@@ -35,11 +30,12 @@ const Header = ({ setPage, currentUser, setCurrentUser, openAuthModal }) => {
         </div>
 
         <nav>
+          <button onClick={goHome}>Главная</button>
           <button onClick={goCatalog}>Каталог</button>
           <button onClick={() => setPage("repair")}>Ремонт</button>
           <button onClick={goContacts}>Контакты</button>
           
-          {/*  Корзина только для авторизованных */}
+          {/* Корзина только для авторизованных */}
           {currentUser && <button onClick={() => setPage("cart")}>Корзина</button>}
           
           {currentUser ? (

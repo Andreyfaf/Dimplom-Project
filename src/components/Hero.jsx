@@ -1,13 +1,19 @@
 import React from "react";
 import workProcess from "../assets/work-process.jpg";
 
-const Hero = () => {
+const Hero = ({ setPage }) => {  // ← добавить setPage в пропсы
+  const goToCatalog = () => {
+    setPage("catalog");  // ← переключаем на страницу каталога
+  };
+
   return (
     <section className="hero" style={{ backgroundImage: `url(${workProcess})` }}>
       <div className="hero-text">
         <h2>Продажа и ремонт гидроцилиндров</h2>
         <p>Быстро, надёжно, с гарантией!</p>
-        <a href="#catalog" className="btn-primary">Смотреть каталог</a>
+        <button onClick={goToCatalog} className="btn-primary">
+          Смотреть каталог
+        </button>
       </div>
     </section>
   );

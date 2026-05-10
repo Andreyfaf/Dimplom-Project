@@ -39,10 +39,12 @@ const products = [
   }
 ];
 
-const Catalog = ({ currentUser }) => {
-  const addToCart = (product) => {
+const Catalog = ({ currentUser, onProductClick }) => {
+  const addToCart = (product, e) => {
+    e.stopPropagation();
+    
     if (!currentUser) {
-      console.log("⚠️ Для добавления в корзину необходимо войти в аккаунт!");
+      alert("⚠️ Для добавления в корзину необходимо войти в аккаунт!");
       return;
     }
 
@@ -58,36 +60,36 @@ const Catalog = ({ currentUser }) => {
     });
     
     localStorage.setItem(cartKey, JSON.stringify(cart));
-    console.log(`✓ ${product.name} добавлен в корзину!`);
+    alert(`✓ ${product.name} добавлен в корзину!`);
   };
 
   return (
-    <section id="catalog" className="catalog">
-      <div className="container">
-        <h2>Популярные гидроцилиндры</h2>
-        <div className="products-grid">
-          {products.map(product => (
-            <div className="product-card" key={product.id}>
-              <div className="product-image">
-                <img src={product.img} alt={product.name} />
-              </div>
-              <div className="product-info">
-                <h3>{product.name}</h3>
-                <p className="product-fits">{product.fits}</p>
-                <p className="product-description">{product.description}</p>
-                <p className="price">{product.price}</p>
-                <button 
-                  className="add-to-cart-btn"
-                  onClick={() => addToCart(product)}
-                >
-                  🛒 В корзину
-                </button>
-              </div>
-            </div>
-          ))}
+    <div className="products-grid">
+      {products.map(product => (
+        <div 
+          className="product-card" 
+          key={product.id}
+          onClick={() => onProductClick && onProductClick(product)}
+          style={{ cursor: "pointer" }}
+        >
+          <div className="product-image">
+            <img src={product.img} alt={product.name} />
+          </div>
+          <div className="product-info">
+            <h3>{product.name}</h3>
+            <p className="product-fits">{product.fits}</p>
+            <p className="product-description">{product.description}</p>
+            <p className="price">{product.price}</p>
+            <button 
+              className="add-to-cart-btn"
+              onClick={(e) => addToCart(product, e)}
+            >
+              🛒 В корзину
+            </button>
+          </div>
         </div>
-      </div>
-    </section>
+      ))}
+    </div>
   );
 };
 
