@@ -1,0 +1,24 @@
+services:
+  backend:
+    build: ./backend
+    container_name: django-backend
+    expose:
+      - "8000"
+    volumes:
+      - ./backend:/app
+      - backend_data:/app/data
+    env_file:
+      - .env
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    container_name: react-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  backend_data:

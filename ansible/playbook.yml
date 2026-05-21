@@ -1,0 +1,94 @@
+---
+- name: Настройка VPS для веб-платформы
+  hosts: vps
+  become: yes
+
+  tasks:
+    - name: Обновить apt
+      apt:
+        update_cache: yes
+        upgrade: dist
+
+    - name: Установить необходимые пакеты
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gnupg
+          - lsb-release
+          - git
+          - ufw
+          - python3-pip
+          - python3-docker
+        state: present
+
+    - name: Добавить GPG ключ Docker
+      shell: |
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+      args:
+        creates: /etc/apt/keyrings/docker.gpg
+
+    - name: Добавить репозиторий Docker
+      shell: |
+        echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+      args:
+        creates: /etc/apt/sources.list.d/docker.list
+
+    - name: Установить Docker и Docker Compose
+      apt:
+        update_cache: yes
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-compose-plugin
+        state: present
+
+    - name: Клонировать репозиторий
+      git:
+        repo: https://github.com/Andreyfaf/Dimplom-Project.git
+        dest: /opt/Dimplom-Project
+        version: master
+        force: yes
+
+    - name: Создать .env файл
+      copy:
+        content: |
+          DEBUG=0
+          SECRET_KEY={{ lookup('password', '/dev/null length=50 chars=ascii_letters,digits') }}
+          ALLOWED_HOSTS={{ ansible_host }},localhost,127.0.0.1,backend
+        dest: /opt/Dimplom-Project/.env
+
+    - name: Открыть порты в firewall
+      ufw:
+        rule: allow
+        port: "{{ item }}"
+        proto: tcp
+      loop:
+        - "22"
+        - "80"
+        - "443"
+
+    - name: Включить UFW
+      ufw:
+        state: enabled
+        policy: deny
+        direction: incoming
+
+    - name: Запустить и включить Docker
+      systemd:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Запустить Docker Compose через shell
+      shell:
+        cmd: |
+          cd /opt/Dimplom-Project
+          docker compose up -d --build
+      register: compose_output
+
+    - name: Вывести статус контейнеров
+      debug:
+        msg: "{{ compose_output.stdout }}"
