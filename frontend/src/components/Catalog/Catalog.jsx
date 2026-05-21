@@ -1,3 +1,4 @@
+import "./Catalog.css";
 import React from "react";
 
 const Catalog = ({

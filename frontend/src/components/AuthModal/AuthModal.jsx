@@ -1,3 +1,4 @@
+import "./AuthModal.css";
 import { useState } from "react";
 
 const AuthModal = ({ isOpen, onClose, onLogin }) => {

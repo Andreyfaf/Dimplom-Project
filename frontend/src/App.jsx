@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
-import Profile from "./components/Profile";
-import Header from "./components/Header";
+import Profile from "./components/Profile/Profile";
+import Header from "./components/Header/Header";
 import Hero from "./components/Hero";
 import CatalogPage from "./components/CatalogPage";
 import Contacts from "./components/Contacts";
-import Footer from "./components/Footer";
-import Cart from "./components/Cart";
-import AuthModal from "./components/AuthModal";
-import ProductPage from "./components/ProductPage";
+import Footer from "./components/Footer/Footer";
+import Cart from "./components/Cart/Cart";
+import AuthModal from "./components/AuthModal/AuthModal";
+import ProductPage from "./components/ProductPage/ProductPage";
 import RepairService from "./components/RepairService";
 
 import "./App.css";

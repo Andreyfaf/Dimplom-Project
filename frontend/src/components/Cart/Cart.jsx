@@ -1,3 +1,4 @@
+import "./Cart.css";
 import { useState, useEffect } from "react";
 
 const Cart = ({ currentUser, openAuthModal }) => {
