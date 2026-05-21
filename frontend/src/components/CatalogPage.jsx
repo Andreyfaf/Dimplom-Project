@@ -1,21 +1,56 @@
 import React from "react";
+
 import Catalog from "./Catalog";
 
-const CatalogPage = ({ currentUser, onAddToCart, onProductClick, products }) => {
+const CatalogPage = ({
+  products,
+  currentUser,
+  onProductClick,
+  onAddToCart
+}) => {
+
   return (
-    <div style={{ padding: "50px 0" }}>
+    <div
+      style={{
+        padding: "70px 0",
+      }}
+    >
+
       <div className="container">
-        <h1>Каталог гидроцилиндров</h1>
-        <p style={{ marginBottom: "30px", color: "#666" }}>
-          Широкий выбор гидроцилиндров для экскаваторов, прессов и спецтехники.
+
+        <h1
+          style={{
+            marginBottom: "10px",
+            marginLeft: "10px",
+            fontSize: "52px",
+            color: "#1e2b3a",
+          }}
+        >
+          Каталог гидроцилиндров
+        </h1>
+
+        <p
+          style={{
+            marginBottom: "50px",
+            marginLeft: "10px",
+            color: "#666",
+            fontSize: "22px",
+          }}
+        >
+          Широкий выбор гидроцилиндров
+          для экскаваторов,
+          прессов и спецтехники
         </p>
+
         <Catalog
           products={products}
           currentUser={currentUser}
-          onAddToCart={onAddToCart}
           onProductClick={onProductClick}
+          onAddToCart={onAddToCart}
         />
+
       </div>
+
     </div>
   );
 };

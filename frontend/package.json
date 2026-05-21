@@ -5,8 +5,6 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "backend:dev": "py backend/manage.py runserver",
-    "backend:migrate": "py backend/manage.py migrate",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"

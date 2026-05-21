@@ -1,230 +1,300 @@
 import { useState } from "react";
-import { loginUser, registerUser } from "../lib/api";
-import {
-  validateEmail,
-  validateName,
-  validatePassword,
-  validatePasswordConfirmation,
-} from "../lib/validation";
-
-const emptyForm = {
-  email: "",
-  password: "",
-  name: "",
-  confirmPassword: "",
-};
-
-const emptyErrors = {
-  email: "",
-  password: "",
-  name: "",
-  confirmPassword: "",
-};
 
 const AuthModal = ({ isOpen, onClose, onLogin }) => {
-  const [isLogin, setIsLogin] = useState(true);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState(emptyForm);
-  const [error, setError] = useState("");
-  const [fieldErrors, setFieldErrors] = useState(emptyErrors);
 
-  const validateField = (name, value, values = formData) => {
-    switch (name) {
-      case "name":
-        return validateName(value, "Имя");
-      case "email":
-        return validateEmail(value);
-      case "password":
-        return validatePassword(value);
-      case "confirmPassword":
-        return validatePasswordConfirmation(values.password, value);
-      default:
-        return "";
-    }
-  };
+  const [isLogin, setIsLogin] = useState(true);
+
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    name: "",
+    confirmPassword: "",
+  });
+
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    const nextData = {
+    setFormData({
       ...formData,
-      [name]: value,
-    };
+      [e.target.name]: e.target.value,
+    });
 
-    setFormData(nextData);
-    setError("");
-    setFieldErrors((prev) => ({
-      ...prev,
-      [name]: validateField(name, value, nextData),
-      ...(name === "password"
-        ? { confirmPassword: nextData.confirmPassword ? validateField("confirmPassword", nextData.confirmPassword, nextData) : "" }
-        : {}),
-    }));
-  };
-
-  const validateForm = () => {
-    const nextErrors = {
-      email: validateField("email", formData.email),
-      password: validateField("password", formData.password),
-      name: isLogin ? "" : validateField("name", formData.name),
-      confirmPassword: isLogin ? "" : validateField("confirmPassword", formData.confirmPassword),
-    };
-
-    setFieldErrors(nextErrors);
-    return !Object.values(nextErrors).some(Boolean);
-  };
-
-  const resetForm = () => {
-    setFormData(emptyForm);
-    setFieldErrors(emptyErrors);
     setError("");
   };
 
-  const closeModal = () => {
-    resetForm();
-    onClose();
+  const transferGuestCart = (userId) => {
+    const guestCart = localStorage.getItem("cart_guest");
+
+    if (guestCart) {
+      const guestItems = JSON.parse(guestCart);
+
+      if (guestItems.length > 0) {
+        localStorage.setItem(
+          `cart_${userId}`,
+          JSON.stringify(guestItems)
+        );
+
+        localStorage.removeItem("cart_guest");
+      }
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!validateForm()) {
-      return;
+    setError("");
+
+    // Проверка регистрации
+    if (!isLogin) {
+
+      if (formData.password !== formData.confirmPassword) {
+        setError("Пароли не совпадают");
+        return;
+      }
+
+      if (formData.password.length < 8) {
+        setError("Пароль должен содержать минимум 8 символов");
+        return;
+      }
+
+      if (!formData.name.trim()) {
+        setError("Введите имя");
+        return;
+      }
     }
 
-    setIsSubmitting(true);
-
     try {
-      const payload = isLogin
-        ? await loginUser({
-            email: formData.email.trim().toLowerCase(),
-            password: formData.password,
-          })
-        : await registerUser({
-            email: formData.email.trim().toLowerCase(),
-            password: formData.password,
-            name: formData.name.trim(),
-            confirm_password: formData.confirmPassword,
-          });
 
-      onLogin(payload);
-      closeModal();
-    } catch (submitError) {
-      setError(submitError.message);
-    } finally {
-      setIsSubmitting(false);
+      const url = isLogin
+        ? "http://127.0.0.1:8000/api/auth/login/"
+        : "http://127.0.0.1:8000/api/auth/register/";
+
+      const bodyData = isLogin
+        ? {
+            email: formData.email,
+            password: formData.password,
+          }
+        : {
+            email: formData.email,
+            password: formData.password,
+            confirm_password: formData.confirmPassword,
+            name: formData.name,
+          };
+
+      const response = await fetch(url, {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json",
+        },
+
+        body: JSON.stringify(bodyData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+
+        console.log(data);
+
+        setError(
+          data.detail ||
+          data.email?.[0] ||
+          data.password?.[0] ||
+          data.non_field_errors?.[0] ||
+          "Ошибка авторизации"
+        );
+
+        return;
+      }
+
+      localStorage.setItem("token", data.token);
+
+      localStorage.setItem(
+        "currentUser",
+        JSON.stringify(data.user)
+      );
+
+      transferGuestCart(data.user.id);
+
+      onLogin(data);
+
+      onClose();
+
+      setFormData({
+        email: "",
+        password: "",
+        name: "",
+        confirmPassword: "",
+      });
+
+    } catch (err) {
+
+      console.error(err);
+
+      setError("Ошибка подключения к серверу");
+
     }
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay" onClick={closeModal}>
-      <div className="auth-modal" onClick={(e) => e.stopPropagation()}>
-        <button className="auth-modal-close" onClick={closeModal}>×</button>
+    <div
+      className="modal-overlay"
+      onClick={onClose}
+    >
+
+      <div
+        className="auth-modal"
+        onClick={(e) => e.stopPropagation()}
+      >
+
+        <button
+          className="auth-modal-close"
+          onClick={onClose}
+        >
+          ×
+        </button>
 
         <div className="auth-modal-header">
-          <h2>{isLogin ? "Вход в аккаунт" : "Регистрация"}</h2>
-          <p>{isLogin ? "Войдите в свой аккаунт" : "Создайте новый аккаунт"}</p>
+
+          <h2>
+            {isLogin
+              ? "Вход в аккаунт"
+              : "Регистрация"}
+          </h2>
+
+          <p>
+            {isLogin
+              ? "Введите email и пароль"
+              : "Создайте новый аккаунт"}
+          </p>
+
         </div>
 
-        {error && <div className="auth-error">{error}</div>}
+        {error && (
+          <div className="auth-error">
+            {error}
+          </div>
+        )}
 
-        <form onSubmit={handleSubmit} noValidate>
+        <form onSubmit={handleSubmit}>
+
           {!isLogin && (
             <div className="auth-form-group">
-              <label htmlFor="auth-name">Ваше имя</label>
+
+              <label>Ваше имя</label>
+
               <input
-                id="auth-name"
                 type="text"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
                 required
-                autoComplete="name"
-                minLength={2}
-                maxLength={80}
-                placeholder="Например: Иван Петров"
-                aria-invalid={Boolean(fieldErrors.name)}
+                placeholder="Иван Петров"
               />
-              {fieldErrors.name && <div className="auth-error">{fieldErrors.name}</div>}
+
             </div>
           )}
 
           <div className="auth-form-group">
-            <label htmlFor="auth-email">Email</label>
+
+            <label>Email</label>
+
             <input
-              id="auth-email"
               type="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
               required
-              autoComplete="email"
-              placeholder="ivan@example.com"
-              aria-invalid={Boolean(fieldErrors.email)}
+              placeholder="example@mail.com"
             />
-            {fieldErrors.email && <div className="auth-error">{fieldErrors.email}</div>}
+
           </div>
 
           <div className="auth-form-group">
-            <label htmlFor="auth-password">Пароль</label>
+
+            <label>Пароль</label>
+
             <input
-              id="auth-password"
               type="password"
               name="password"
               value={formData.password}
               onChange={handleChange}
               required
-              autoComplete={isLogin ? "current-password" : "new-password"}
-              minLength={8}
-              maxLength={128}
-              placeholder="Минимум 8 символов, буквы и цифры"
-              aria-invalid={Boolean(fieldErrors.password)}
+              placeholder="Минимум 8 символов"
             />
-            {fieldErrors.password && <div className="auth-error">{fieldErrors.password}</div>}
+
           </div>
 
           {!isLogin && (
             <div className="auth-form-group">
-              <label htmlFor="auth-confirm-password">Подтверждение пароля</label>
+
+              <label>
+                Подтверждение пароля
+              </label>
+
               <input
-                id="auth-confirm-password"
                 type="password"
                 name="confirmPassword"
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 required
-                autoComplete="new-password"
-                minLength={8}
-                maxLength={128}
                 placeholder="Повторите пароль"
-                aria-invalid={Boolean(fieldErrors.confirmPassword)}
               />
-              {fieldErrors.confirmPassword && <div className="auth-error">{fieldErrors.confirmPassword}</div>}
+
             </div>
           )}
 
-          <button type="submit" className="auth-submit-btn" disabled={isSubmitting}>
-            {isSubmitting ? "Отправка..." : isLogin ? "Войти" : "Зарегистрироваться"}
+          <button
+            type="submit"
+            className="auth-submit-btn"
+          >
+            {isLogin
+              ? "Войти"
+              : "Зарегистрироваться"}
           </button>
+
         </form>
 
         <div className="auth-footer">
+
           <p>
-            {isLogin ? "Нет аккаунта? " : "Уже есть аккаунт? "}
+
+            {isLogin
+              ? "Нет аккаунта?"
+              : "Уже есть аккаунт?"}
+
             <button
               type="button"
-              onClick={() => {
-                setIsLogin(!isLogin);
-                resetForm();
-              }}
               className="auth-toggle-btn"
+              onClick={() => {
+
+                setIsLogin(!isLogin);
+
+                setError("");
+
+                setFormData({
+                  email: "",
+                  password: "",
+                  name: "",
+                  confirmPassword: "",
+                });
+
+              }}
             >
-              {isLogin ? "Создать аккаунт" : "Войти"}
+              {isLogin
+                ? "Регистрация"
+                : "Войти"}
             </button>
+
           </p>
+
         </div>
+
       </div>
+
     </div>
   );
 };

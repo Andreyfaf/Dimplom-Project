@@ -1,95 +1,111 @@
-import { useState } from "react";
+import React from "react";
+import "./ProductPage.css";
 
 const ProductPage = ({ product, onAddToCart, onBack, currentUser }) => {
-  const [showFullDescription, setShowFullDescription] = useState(false);
-
   if (!product) return null;
 
   return (
     <div className="product-page">
       <div className="container">
+
         <button onClick={onBack} className="back-btn">
-          Назад к каталогу
+          ← Назад в каталог
         </button>
 
-        <div className="product-page-content">
-          <div className="product-page-image">
-            <img src={product.img} alt={product.name} />
+        <div className="product-card-page">
+
+          <div className="product-image-block">
+            <img
+              src={product.image}
+              alt={product.name}
+              className="product-main-image"
+            />
           </div>
 
-          <div className="product-page-info">
+          <div className="product-info-block">
+
             <h1>{product.name}</h1>
 
             <div className="product-date">
-              Добавлен в каталог: {new Date(product.created_at).toLocaleDateString("ru-RU")}
+              Добавлен:{" "}
+              {new Date(product.created_at).toLocaleDateString("ru-RU")}
             </div>
 
-            <div className="product-page-price">{product.price_display}</div>
+            <div className="product-price">
+              {product.price_display}
+            </div>
 
-            <div className="product-purpose">
-              <h3>Для чего нужен:</h3>
+            <div className="product-section">
+              <h3>Назначение</h3>
               <p>{product.purpose}</p>
             </div>
 
             <div className="product-description">
-              <h3>Описание:</h3>
-              <p>
-                {showFullDescription
-                  ? `${product.short_description} ${product.tips} ${product.care}`
-                  : `${product.short_description}...`}
-              </p>
-              <button
-                className="read-more-btn"
-                onClick={() => setShowFullDescription(!showFullDescription)}
-              >
-                {showFullDescription ? "Свернуть" : "Читать полностью"}
-              </button>
-            </div>
+                <h3>Описание</h3>
 
-            <div className="product-recommendations">
-              <h3>Рекомендации:</h3>
-              <ul>
-                <li>{product.tips}</li>
-                <li>{product.warranty}</li>
-                <li>{product.care}</li>
-              </ul>
-            </div>
+                <p>
+                  {product.short_description}
+                </p>
+              </div>
+
+            <div className="product-section">
+                <h3>Рекомендации</h3>
+
+                <ul>
+                  {product.tips && <li>{product.tips}</li>}
+                  {product.warranty && <li>{product.warranty}</li>}
+                  {product.care && <li>{product.care}</li>}
+                </ul>
+              </div>
 
             <button
-              className="add-to-cart-page-btn"
+              className="add-cart-btn-big"
               onClick={() => onAddToCart(product)}
             >
-              Добавить в корзину - {product.price_display}
+              Добавить в корзину — {product.price_display}
             </button>
 
             {!currentUser && (
-              <p className="login-hint">
-                Войдите в аккаунт, чтобы добавить товар в корзину
+              <p className="login-warning">
+                Войдите в аккаунт для оформления заказа
               </p>
             )}
+
           </div>
         </div>
 
-        <div className="product-specs">
-          <h3>Технические характеристики:</h3>
+        <div className="specs-block">
+
+          <h2>Технические характеристики</h2>
+
           <table className="specs-table">
             <tbody>
+
               <tr>
-                <td>Модель:</td>
-                <td>{product.model_name || product.name}</td>
+                <td>Модель</td>
+                <td>{product.model_name}</td>
               </tr>
+
               <tr>
-                <td>Тип:</td>
+                <td>Тип</td>
                 <td>{product.product_type}</td>
               </tr>
+
               <tr>
-                <td>Производитель:</td>
+                <td>Производитель</td>
                 <td>{product.manufacturer}</td>
               </tr>
+
               <tr>
-                <td>Гарантия:</td>
+                <td>Совместимость</td>
+                <td>{product.fits}</td>
+              </tr>
+
+              <tr>
+                <td>Гарантия</td>
                 <td>{product.warranty}</td>
               </tr>
+
             </tbody>
           </table>
         </div>
