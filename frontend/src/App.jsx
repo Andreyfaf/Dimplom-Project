@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-
+import Profile from "./components/Profile";
 import Header from "./components/Header";
 import Hero from "./components/Hero";
 import CatalogPage from "./components/CatalogPage";
@@ -229,12 +229,16 @@ const addToCart = (product) => {
         />
       )}
 
-      {/* CART */}
-
       {page === "cart" && (
         <Cart
           currentUser={currentUser}
           openAuthModal={openAuthModal}
+        />
+      )}
+
+      {page === "profile" && (
+        <Profile
+          currentUser={currentUser}
         />
       )}
 

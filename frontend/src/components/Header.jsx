@@ -1,51 +1,97 @@
 import React from "react";
-import emblem from "../assets/emblem.jpg";
+import "./Header.css";
 
-const Header = ({ setPage, currentUser, setCurrentUser, openAuthModal }) => {
+import logo from "../assets/emblem.jpg";
 
-  const handleLogout = () => {
-    localStorage.removeItem("currentUser");
-    setCurrentUser(null);
-    setPage("home");
-  };
-
-  const goHome = () => setPage("home");
-
-  const goCatalog = () => setPage("catalog");
-
-  const goContacts = () => {
-    setPage("home");
-    setTimeout(() => {
-      document.getElementById("contacts")?.scrollIntoView({ behavior: "smooth" });
-    }, 100);
-  };
-
+const Header = ({
+  setPage,
+  currentUser,
+  openAuthModal,
+  onLogout,
+}) => {
   return (
     <header className="header">
-      <div className="container header-content">
+      <div className="header-container">
 
-        <div className="header-left" onClick={goHome} style={{ cursor: "pointer" }}>
-          <img src={emblem} alt="Логотип" className="emblem" />
-          <h1>Gidrobas</h1>
+        <div
+          className="logo-block"
+          onClick={() => setPage("home")}
+        >
+          <img
+            src={logo}
+            alt="logo"
+            className="logo-image"
+          />
+
+          <div className="logo-text">
+            Gidrobas
+          </div>
         </div>
 
-        <nav>
-          <button onClick={goHome}>Главная</button>
-          <button onClick={goCatalog}>Каталог</button>
-          <button onClick={() => setPage("repair")}>Ремонт</button>
-          <button onClick={goContacts}>Контакты</button>
-          
-          {currentUser && <button onClick={() => setPage("cart")}>Корзина</button>}
-          
-          {currentUser ? (
-            <div className="user-info">
-              <span className="user-name">{currentUser.name || currentUser.email.split('@')[0]}</span>
-              <button onClick={handleLogout} className="logout-btn">Выйти</button>
-            </div>
-          ) : (
-            <button onClick={openAuthModal} className="auth-btn">Вход / Регистрация</button>
+        <div className="nav-menu">
+
+          <div
+            className="nav-link"
+            onClick={() => setPage("home")}
+          >
+            Главная
+          </div>
+
+          <div
+            className="nav-link"
+            onClick={() => setPage("catalog")}
+          >
+            Каталог
+          </div>
+
+          <div
+            className="nav-link"
+            onClick={() => setPage("repair")}
+          >
+            Ремонт
+          </div>
+
+          {currentUser && (
+            <>
+
+              <div
+                className="nav-link"
+                onClick={() => setPage("cart")}
+              >
+                Корзина
+              </div>
+            </>
           )}
-        </nav>
+        </div>
+
+        <div className="user-block">
+
+          {currentUser ? (
+            <>
+              <button
+                className="user-name"
+                onClick={() => setPage("profile")}
+              >
+                {currentUser.name}
+              </button>
+
+              <button
+                className="logout-btn"
+                onClick={onLogout}
+              >
+                Выйти
+              </button>
+            </>
+          ) : (
+            <button
+              className="user-name"
+              onClick={openAuthModal}
+            >
+              Войти
+            </button>
+          )}
+
+        </div>
 
       </div>
     </header>

@@ -21,7 +21,7 @@ const CatalogPage = ({
         <h1
           style={{
             marginBottom: "10px",
-            marginLeft: "10px",
+            marginLeft: "40px",
             fontSize: "52px",
             color: "#1e2b3a",
           }}
@@ -32,7 +32,7 @@ const CatalogPage = ({
         <p
           style={{
             marginBottom: "50px",
-            marginLeft: "10px",
+            marginLeft: "40px",
             color: "#666",
             fontSize: "22px",
           }}

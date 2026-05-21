@@ -1,3 +1,4 @@
+import "./Footer.css"
 import React from "react";
 import video from "../assets/Video.mp4";
 
