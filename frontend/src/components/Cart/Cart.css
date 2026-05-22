@@ -1,0 +1,130 @@
+.warning-message {
+  background: #fff3cd;
+  color: #856404;
+  padding: 12px 20px;
+  margin-bottom: 25px;
+  border-radius: 10px;
+  border-left: 4px solid #ffc107;
+}
+
+.cart-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  border-bottom: 1px solid #ddd;
+  background: white;
+  margin-bottom: 10px;
+  border-radius: 8px;
+}
+
+.remove-btn, .clear-btn {
+  padding: 6px 12px;
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.cart-total {
+  margin-top: 30px;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  text-align: right;
+}
+
+.cart-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 15px;
+}
+
+.order-btn {
+  padding: 10px 20px;
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.order-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.cancel-btn {
+  padding: 10px 20px;
+  background: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.submit-order-btn {
+  padding: 10px 20px;
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.order-form {
+  max-width: 500px;
+  margin: 0 auto;
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+}
+
+.order-form .form-group {
+  margin-bottom: 20px;
+}
+
+.order-form label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.order-form input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+.order-history {
+  margin-top: 50px;
+  padding-top: 30px;
+  border-top: 2px solid #ddd;
+}
+
+.order-history .order-item {
+  background: #f8f9fa;
+  margin-bottom: 15px;
+}
+
+.clear-cart-btn {
+  margin-top: 20px;
+  padding: 10px 24px;
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s;
+}
+
+.clear-cart-btn:hover {
+  background: #c82333;
+  transform: translateY(-2px);
+}

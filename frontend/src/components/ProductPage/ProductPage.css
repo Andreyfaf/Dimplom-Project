@@ -1,0 +1,155 @@
+.product-page {
+  padding: 40px 0;
+}
+
+.back-btn {
+  margin-bottom: 30px;
+  border: none;
+  background: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: #005792;
+}
+
+.product-card-page {
+  display: flex;
+  gap: 40px;
+  background: white;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+}
+
+.product-image-block {
+  flex: 1;
+}
+
+.product-main-image {
+  width: 100%;
+  border-radius: 20px;
+  object-fit: cover;
+}
+
+.product-info-block {
+  flex: 1;
+}
+
+.product-info-block h1 {
+  font-size: 52px;
+  margin-bottom: 15px;
+  color: #1d2736;
+}
+
+.product-date {
+  color: #777;
+  margin-bottom: 20px;
+}
+
+.product-price {
+  font-size: 56px;
+  color: #f28c18;
+  font-weight: bold;
+  margin-bottom: 30px;
+}
+
+.product-section {
+  margin-bottom: 30px;
+}
+
+.product-section h3 {
+  font-size: 26px;
+  margin-bottom: 15px;
+  color: #0d2b52;
+}
+
+.product-section p {
+  font-size: 22px;
+  line-height: 1.6;
+  color: #444;
+}
+
+.details-btn {
+  margin-top: 15px;
+  padding: 12px 24px;
+  background: #005792;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.recommendations-list {
+  padding-left: 20px;
+}
+
+.recommendations-list li {
+  margin-bottom: 10px;
+  font-size: 20px;
+}
+
+.add-cart-btn-big {
+  width: 100%;
+  padding: 22px;
+  border: none;
+  border-radius: 18px;
+  background: #f28c18;
+  color: white;
+  font-size: 30px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 30px;
+}
+
+.add-cart-btn-big:hover {
+  background: #df7d10;
+}
+
+.login-warning {
+  margin-top: 20px;
+  color: #666;
+  font-size: 18px;
+}
+
+.specs-block {
+  margin-top: 50px;
+  background: white;
+  padding: 40px;
+  border-radius: 20px;
+}
+
+.specs-block h2 {
+  margin-bottom: 25px;
+  font-size: 36px;
+}
+
+.specs-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.specs-table td {
+  border-bottom: 1px solid #ddd;
+  padding: 18px;
+  font-size: 20px;
+}
+
+.specs-table td:first-child {
+  width: 300px;
+  font-weight: bold;
+  color: #0d2b52;
+}
+
+@media (max-width: 1000px) {
+  .product-card-page {
+    flex-direction: column;
+  }
+
+  .product-info-block h1 {
+    font-size: 38px;
+  }
+
+  .product-price {
+    font-size: 40px;
+  }
+}

@@ -2,6 +2,8 @@ from rest_framework import permissions, status
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
 
 from .models import CartItem, ContactInfo, LeadershipContact, Order, OrderItem, Product, RepairRequest, RepairService
 from .serializers import (
@@ -29,37 +31,81 @@ class BootstrapView(APIView):
     def get(self, request):
         ensure_seed_data()
         contact_info = ContactInfo.objects.first()
-        return Response(
-            {
-                "contact_info": ContactInfoSerializer(contact_info).data if contact_info else None,
-                "team": LeadershipContactSerializer(LeadershipContact.objects.all(), many=True).data,
-                "products": ProductSerializer(Product.objects.filter(is_active=True), many=True).data,
-                "repair_services": RepairServiceSerializer(RepairService.objects.all(), many=True).data,
-            }
-        )
 
+        return Response({
+            "contact_info": ContactInfoSerializer(contact_info).data if contact_info else None,
+
+            "team": LeadershipContactSerializer(
+                LeadershipContact.objects.all(),
+                many=True
+            ).data,
+
+            "products": ProductSerializer(
+                Product.objects.filter(is_active=True),
+                many=True,
+                context={"request": request}
+            ).data,
+
+            "repair_services": RepairServiceSerializer(
+                RepairService.objects.all(),
+                many=True
+            ).data,
+        })
 
 class RegisterView(APIView):
-    permission_classes = [permissions.AllowAny]
-
     def post(self, request):
-        serializer = RegisterSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.save()
-        token, _ = Token.objects.get_or_create(user=user)
-        return Response({"token": token.key, "user": UserSerializer(user).data}, status=status.HTTP_201_CREATED)
 
+        email = request.data.get("email")
+        password = request.data.get("password")
+        name = request.data.get("name")
+
+        if User.objects.filter(username=email).exists():
+            return Response(
+                {"error": "Пользователь уже существует"},
+                status=400
+            )
+
+        user = User.objects.create_user(
+            username=email,
+            email=email,
+            password=password,
+            first_name=name
+        )
+
+        return Response({
+            "user": {
+                "id": user.id,
+                "username": user.username,
+                "email": user.email,
+                "name": user.first_name
+            }
+        })
 
 class LoginView(APIView):
-    permission_classes = [permissions.AllowAny]
-
     def post(self, request):
-        serializer = LoginSerializer(data=request.data, context={"request": request})
-        serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data["user"]
-        token, _ = Token.objects.get_or_create(user=user)
-        return Response({"token": token.key, "user": UserSerializer(user).data})
 
+        email = request.data.get("email")
+        password = request.data.get("password")
+
+        user = authenticate(
+            username=email,
+            password=password
+        )
+
+        if not user:
+            return Response(
+                {"error": "Неверный email или пароль"},
+                status=400
+            )
+
+        return Response({
+            "user": {
+                "id": user.id,
+                "username": user.username,
+                "email": user.email,
+                "name": user.first_name
+            }
+        })
 
 class LogoutView(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -90,22 +136,32 @@ class AddCartItemView(APIView):
     def post(self, request):
         serializer = AddCartItemSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        ensure_seed_data()
-        product = Product.objects.filter(pk=serializer.validated_data["product_id"], is_active=True).first()
-        if not product:
-            return Response({"detail": "Товар не найден."}, status=status.HTTP_404_NOT_FOUND)
 
+        product_id = serializer.validated_data["product_id"]
         quantity = serializer.validated_data["quantity"]
+
+        product = Product.objects.filter(id=product_id).first()
+
+        if not product:
+            return Response(
+                {"detail": "Товар не найден"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
         cart_item, created = CartItem.objects.get_or_create(
             user=request.user,
             product=product,
             defaults={"quantity": quantity},
         )
+
         if not created:
             cart_item.quantity += quantity
             cart_item.save(update_fields=["quantity"])
 
-        return Response(CartItemSerializer(cart_item).data, status=status.HTTP_201_CREATED)
+        return Response(
+            CartItemSerializer(cart_item).data,
+            status=status.HTTP_201_CREATED
+        )
 
 
 class CartItemDetailView(APIView):

@@ -1,5 +1,6 @@
 from django.contrib.auth import authenticate, get_user_model
 from rest_framework import serializers
+from django.contrib.auth.models import User
 
 from .models import CartItem, ContactInfo, LeadershipContact, Order, OrderItem, Product, RepairRequest, RepairService
 from .validators import (
@@ -13,61 +14,45 @@ User = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
-    name = serializers.SerializerMethodField()
+    phone = serializers.CharField(source="username")
 
     class Meta:
         model = User
-        fields = ["id", "email", "name"]
-
-    def get_name(self, obj):
-        return obj.first_name or obj.username
+        fields = ["id", "first_name", "phone"]
 
 
 class RegisterSerializer(serializers.Serializer):
-    email = serializers.EmailField()
-    name = serializers.CharField(max_length=150)
-    password = serializers.CharField(min_length=8, write_only=True)
-    confirm_password = serializers.CharField(min_length=8, write_only=True)
+    name = serializers.CharField()
+    phone = serializers.CharField()
+    password = serializers.CharField(min_length=8)
 
-    def validate_email(self, value):
-        normalized = value.strip().lower()
-        if User.objects.filter(email__iexact=normalized).exists():
-            raise serializers.ValidationError("Пользователь с таким email уже существует.")
-        return normalized
-
-    def validate_name(self, value):
-        return validate_person_name(value, "Имя")
-
-    def validate_password(self, value):
-        return validate_password_strength(value)
-
-    def validate(self, attrs):
-        if attrs["password"] != attrs["confirm_password"]:
-            raise serializers.ValidationError({"confirm_password": "Пароли не совпадают."})
-        return attrs
+    def validate_phone(self, value):
+        if User.objects.filter(username=value).exists():
+            raise serializers.ValidationError("Пользователь уже существует")
+        return value
 
     def create(self, validated_data):
-        validated_data.pop("confirm_password")
-        return User.objects.create_user(
-            username=validated_data["email"],
-            email=validated_data["email"],
+        user = User.objects.create_user(
+            username=validated_data["phone"],
             first_name=validated_data["name"],
-            password=validated_data["password"],
+            password=validated_data["password"]
         )
+        return user
 
 
 class LoginSerializer(serializers.Serializer):
-    email = serializers.EmailField()
-    password = serializers.CharField(write_only=True)
+    phone = serializers.CharField()
+    password = serializers.CharField()
 
     def validate(self, attrs):
         user = authenticate(
-            request=self.context.get("request"),
-            username=attrs["email"].strip().lower(),
-            password=attrs["password"],
+            username=attrs["phone"],
+            password=attrs["password"]
         )
+
         if not user:
-            raise serializers.ValidationError("Неверный email или пароль.")
+            raise serializers.ValidationError("Неверный телефон или пароль")
+
         attrs["user"] = user
         return attrs
 
@@ -90,7 +75,7 @@ class ProductSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "name",
-            "image_key",
+            "image",
             "fits",
             "short_description",
             "price_display",

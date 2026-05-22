@@ -2,7 +2,6 @@ from django.conf import settings
 from django.db import models
 from django.utils import timezone
 
-
 class ContactInfo(models.Model):
     company_name = models.CharField(max_length=120, default="Gidrobas")
     phone = models.CharField(max_length=32)
@@ -29,7 +28,14 @@ class LeadershipContact(models.Model):
 
 class Product(models.Model):
     name = models.CharField(max_length=255, unique=True)
-    image_key = models.CharField(max_length=64)
+    
+    image = models.ImageField(
+        upload_to="products/",
+        blank=True,
+        null=True,
+        default=None
+    )
+    
     fits = models.CharField(max_length=255)
     short_description = models.TextField()
     price_display = models.CharField(max_length=64)
@@ -67,8 +73,18 @@ class RepairService(models.Model):
 
 
 class CartItem(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="cart_items")
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="cart_items")
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="cart_items"
+    )
+
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE,
+        related_name="cart_items"
+    )
+
     quantity = models.PositiveIntegerField(default=1)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -77,23 +93,35 @@ class CartItem(models.Model):
         ordering = ["-created_at"]
 
     def __str__(self):
-        return f"{self.user.username}: {self.product.name} x{self.quantity}"
+        return f"{self.user.phone}: {self.product.name} x{self.quantity}"
 
 
 class Order(models.Model):
     STATUS_NEW = "новый"
+
     STATUS_CHOICES = [
         (STATUS_NEW, "Новый"),
         ("в работе", "В работе"),
         ("завершен", "Завершен"),
     ]
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="orders")
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="orders"
+    )
+
     full_name = models.CharField(max_length=255)
     phone = models.CharField(max_length=32)
     address = models.CharField(max_length=255, blank=True)
     total_amount = models.PositiveIntegerField()
-    status = models.CharField(max_length=32, choices=STATUS_CHOICES, default=STATUS_NEW)
+
+    status = models.CharField(
+        max_length=32,
+        choices=STATUS_CHOICES,
+        default=STATUS_NEW
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -104,7 +132,12 @@ class Order(models.Model):
 
 
 class OrderItem(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="items")
+    order = models.ForeignKey(
+        Order,
+        on_delete=models.CASCADE,
+        related_name="items"
+    )
+
     product_name = models.CharField(max_length=255)
     price_display = models.CharField(max_length=64)
     quantity = models.PositiveIntegerField(default=1)
@@ -117,8 +150,18 @@ class OrderItem(models.Model):
 class RepairRequest(models.Model):
     STATUS_NEW = "новая"
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="repair_requests")
-    service = models.ForeignKey(RepairService, on_delete=models.CASCADE, related_name="requests")
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="repair_requests"
+    )
+
+    service = models.ForeignKey(
+        RepairService,
+        on_delete=models.CASCADE,
+        related_name="requests"
+    )
+
     name = models.CharField(max_length=255)
     phone = models.CharField(max_length=32)
     city = models.CharField(max_length=120)

@@ -1,117 +1,119 @@
-import { useEffect, useState } from "react";
-import Header from "./components/Header";
+import React, { useState, useEffect } from "react";
+import Profile from "./components/Profile/Profile";
+import Header from "./components/Header/Header";
 import Hero from "./components/Hero";
 import CatalogPage from "./components/CatalogPage";
 import Contacts from "./components/Contacts";
-import Footer from "./components/Footer";
-import Cart from "./components/Cart";
-import AuthModal from "./components/AuthModal";
-import ProductPage from "./components/ProductPage";
+import Footer from "./components/Footer/Footer";
+import Cart from "./components/Cart/Cart";
+import AuthModal from "./components/AuthModal/AuthModal";
+import ProductPage from "./components/ProductPage/ProductPage";
 import RepairService from "./components/RepairService";
-import { addCartItem, fetchBootstrap, fetchProfile, logoutUser } from "./lib/api";
-import { resolveProductImage } from "./lib/productMedia";
+
 import "./App.css";
+
+const API_URL = "http://127.0.0.1:8000/api";
 
 function App() {
   const [page, setPage] = useState("home");
+
   const [currentUser, setCurrentUser] = useState(null);
-  const [authToken, setAuthToken] = useState("");
+
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [bootstrapData, setBootstrapData] = useState({
-    contactInfo: null,
-    team: [],
-    products: [],
-    repairServices: [],
-  });
-  const [isLoadingData, setIsLoadingData] = useState(true);
-  const [bootstrapError, setBootstrapError] = useState("");
 
-  useEffect(() => {
-    let isMounted = true;
+  const [products, setProducts] = useState([]);
 
-    const loadBootstrapData = async () => {
-      try {
-        const data = await fetchBootstrap();
-        if (!isMounted) {
-          return;
-        }
+  const [contactInfo, setContactInfo] = useState(null);
 
-        setBootstrapData({
-          contactInfo: data.contact_info,
-          team: data.team,
-          products: data.products.map((product) => ({
-            ...product,
-            img: resolveProductImage(product.image_key),
-          })),
-          repairServices: data.repair_services,
-        });
-      } catch (error) {
-        if (isMounted) {
-          setBootstrapError(error.message);
-        }
-      } finally {
-        if (isMounted) {
-          setIsLoadingData(false);
-        }
-      }
-    };
+  const [repairServices, setRepairServices] = useState([]);
 
-    loadBootstrapData();
+  const [team, setTeam] = useState([]);
 
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+  // =========================
+// Загрузка пользователя
+// =========================
 
-  useEffect(() => {
-    const savedToken = localStorage.getItem("authToken");
-    const savedUser = localStorage.getItem("currentUser");
+useEffect(() => {
 
-    if (!savedToken) {
-      if (savedUser) {
-        localStorage.removeItem("currentUser");
-      }
-      return;
-    }
+  const savedUser = localStorage.getItem("currentUser");
 
-    setAuthToken(savedToken);
-    if (savedUser) {
+  if (
+    savedUser &&
+    savedUser !== "undefined" &&
+    savedUser !== "null"
+  ) {
+    try {
       setCurrentUser(JSON.parse(savedUser));
-    }
+    } catch (error) {
+      console.error("Ошибка чтения currentUser:", error);
 
-    fetchProfile(savedToken)
-      .then((user) => {
-        setCurrentUser(user);
-        localStorage.setItem("currentUser", JSON.stringify(user));
+      localStorage.removeItem("currentUser");
+    }
+  }
+
+}, []);
+  // =========================
+  // Загрузка данных из Django
+  // =========================
+
+  useEffect(() => {
+    fetch(`${API_URL}/bootstrap/`)
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("BOOTSTRAP:", data);
+
+        setProducts(data.products || []);
+
+        setContactInfo(data.contact_info || null);
+
+        setRepairServices(data.repair_services || []);
+
+        setTeam(data.team || []);
       })
-      .catch(() => {
-        localStorage.removeItem("authToken");
-        localStorage.removeItem("currentUser");
-        setAuthToken("");
-        setCurrentUser(null);
+      .catch((err) => {
+        console.error("Ошибка загрузки API:", err);
       });
   }, []);
 
-  const handleLogin = ({ user, token }) => {
-    setCurrentUser(user);
-    setAuthToken(token);
-    localStorage.setItem("authToken", token);
-    localStorage.setItem("currentUser", JSON.stringify(user));
+  // =========================
+  // LOGIN
+  // =========================
+
+  const handleLogin = (data) => {
+    setCurrentUser(data.user);
+
+    localStorage.setItem(
+      "currentUser",
+      JSON.stringify(data.user)
+    );
+
+    localStorage.setItem(
+      "token",
+      data.token
+    );
+
+    closeAuthModal();
   };
 
-  const handleLogout = async () => {
-    const activeToken = authToken || localStorage.getItem("authToken");
-    if (activeToken) {
-      await logoutUser(activeToken).catch(() => null);
-    }
+  // =========================
+  // LOGOUT
+  // =========================
 
-    localStorage.removeItem("authToken");
+  const handleLogout = () => {
     localStorage.removeItem("currentUser");
-    setAuthToken("");
+
+    localStorage.removeItem("token");
+
     setCurrentUser(null);
+
     setPage("home");
   };
+
+  // =========================
+  // AUTH MODAL
+  // =========================
 
   const openAuthModal = () => {
     setIsAuthModalOpen(true);
@@ -121,46 +123,60 @@ function App() {
     setIsAuthModalOpen(false);
   };
 
+  // =========================
+  // PRODUCT PAGE
+  // =========================
+
   const handleProductClick = (product) => {
     setSelectedProduct(product);
+
     setPage("product");
   };
 
   const handleBackToCatalog = () => {
     setSelectedProduct(null);
+
     setPage("catalog");
   };
 
-  const addToCart = async (product) => {
-    if (!currentUser) {
-      alert("Для добавления в корзину необходимо войти в аккаунт.");
-      openAuthModal();
-      return;
-    }
+  // =========================
+  // ADD TO CART
+  // =========================
 
-    try {
-      await addCartItem(authToken, product.id, 1);
-      alert(`${product.name} добавлен в корзину.`);
-    } catch (error) {
-      alert(error.message);
-    }
-  };
+const addToCart = (product) => {
 
-  if (isLoadingData) {
-    return <div className="container" style={{ padding: "80px 0" }}>Загрузка данных...</div>;
+  if (!currentUser) {
+    alert("Для добавления в корзину необходимо войти!");
+
+    openAuthModal();
+
+    return;
   }
 
-  if (bootstrapError) {
-    return <div className="container" style={{ padding: "80px 0" }}>Ошибка API: {bootstrapError}</div>;
-  }
+  const cartKey = `cart_${currentUser.id}`;
+
+  const existingCart = JSON.parse(
+    localStorage.getItem(cartKey) || "[]"
+  );
+
+  existingCart.push(product);
+
+  localStorage.setItem(
+    cartKey,
+    JSON.stringify(existingCart)
+  );
+
+  alert(`${product.name} добавлен в корзину!`);
+};
 
   return (
     <div>
       <Header
         setPage={setPage}
         currentUser={currentUser}
-        onLogout={handleLogout}
+        setCurrentUser={setCurrentUser}
         openAuthModal={openAuthModal}
+        onLogout={handleLogout}
       />
 
       <AuthModal
@@ -169,24 +185,31 @@ function App() {
         onLogin={handleLogin}
       />
 
+      {/* HOME */}
+
       {page === "home" && (
         <>
           <Hero setPage={setPage} />
+
           <Contacts
-            contactInfo={bootstrapData.contactInfo}
-            team={bootstrapData.team}
+            contactInfo={contactInfo}
+            team={team}
           />
         </>
       )}
 
+      {/* CATALOG */}
+
       {page === "catalog" && (
         <CatalogPage
-          products={bootstrapData.products}
+          products={products}
           currentUser={currentUser}
-          onAddToCart={addToCart}
           onProductClick={handleProductClick}
-        />
+          onAddToCart={addToCart}
+/>
       )}
+
+      {/* PRODUCT */}
 
       {page === "product" && (
         <ProductPage
@@ -197,20 +220,25 @@ function App() {
         />
       )}
 
+      {/* REPAIR */}
+
       {page === "repair" && (
         <RepairService
-          authToken={authToken}
           currentUser={currentUser}
-          openAuthModal={openAuthModal}
-          repairServices={bootstrapData.repairServices}
+          services={repairServices}
         />
       )}
 
       {page === "cart" && (
         <Cart
-          authToken={authToken}
           currentUser={currentUser}
           openAuthModal={openAuthModal}
+        />
+      )}
+
+      {page === "profile" && (
+        <Profile
+          currentUser={currentUser}
         />
       )}
 
