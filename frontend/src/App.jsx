@@ -12,7 +12,7 @@ import RepairService from "./components/RepairService";
 
 import "./App.css";
 
-const API_URL = "http://127.0.0.1:8000/api";
+const API_URL = "/api";
 
 function App() {
   const [page, setPage] = useState("home");
