@@ -5,7 +5,7 @@ services:
     expose:
       - "8000"
     volumes:
-      - ./backend:/app
+      - ./backend:/app          #монтирует всю папку backend (включая media)
       - backend_data:/app/data
     env_file:
       - .env
@@ -16,6 +16,8 @@ services:
     container_name: react-frontend
     ports:
       - "80:80"
+    volumes:
+      - ./backend/media:/app/media   #монтируем папку media из backend
     depends_on:
       - backend
     restart: unless-stopped
