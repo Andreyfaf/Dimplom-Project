@@ -16,21 +16,9 @@
   background: white;
   width: 450px;
   max-width: 90%;
-  border-radius: 16px;
+  border-radius: 12px;
   position: relative;
-  animation: modalFadeIn 0.3s ease;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-}
-
-@keyframes modalFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
 }
 
 .auth-modal-close {
@@ -53,14 +41,9 @@
 .auth-modal-header {
   text-align: center;
   padding: 30px 30px 20px;
-  background: linear-gradient(135deg, #004d7a 0%, #003a5c 100%);
-  border-radius: 16px 16px 0 0;
+  background: #004d7a;
+  border-radius: 12px 12px 0 0;
   color: white;
-}
-
-.auth-modal-icon {
-  font-size: 48px;
-  margin-bottom: 10px;
 }
 
 .auth-modal-header h2 {
@@ -105,7 +88,7 @@
   border: 2px solid #e0e0e0;
   border-radius: 10px;
   font-size: 15px;
-  transition: all 0.3s;
+  transition: border-color 0.2s;
   box-sizing: border-box;
   font-family: inherit;
 }
@@ -121,8 +104,9 @@
 }
 
 .auth-submit-btn {
+  display: block;
+  width: auto;
   margin: 10px 30px 30px;
-  width: calc(100% - 60px);
   padding: 14px;
   background: #f7931e;
   color: white;
@@ -131,13 +115,11 @@
   font-size: 18px;
   font-weight: bold;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: background-color 0.2s;
 }
 
 .auth-submit-btn:hover {
   background: #e07c0a;
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(247, 147, 30, 0.3);
 }
 
 .auth-footer {
@@ -145,7 +127,7 @@
   padding: 20px 30px 30px;
   border-top: 1px solid #eee;
   background: #f9f9f9;
-  border-radius: 0 0 16px 16px;
+  border-radius: 0 0 12px 12px;
 }
 
 .auth-footer p {

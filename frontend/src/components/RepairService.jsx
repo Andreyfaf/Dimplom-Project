@@ -1,70 +1,50 @@
 import { useState } from "react";
+import { apiRequest } from "../api";
 
-const RepairService = ({ currentUser }) => {
+const RepairService = ({ currentUser, services = [] }) => {
   const [selectedService, setSelectedService] = useState(null);
   const [formData, setFormData] = useState({
     name: currentUser?.name || "",
-    email: currentUser?.email || "",
+    phone: currentUser?.phone || "",
     city: "Актау",
     problem: ""
   });
+  const [error, setError] = useState("");
 
-  const repairServices = [
-    {
-      id: 1,
-      name: "Диагностика",
-      description: "Полная проверка гидроцилиндра, выявление неисправностей",
-      price: "1 500 ₽",
-      time: "1-2 дня"
-    },
-    {
-      id: 2,
-      name: "Замена уплотнений",
-      description: "Замена манжет, колец и всех уплотнителей",
-      price: "3 000 ₽",
-      time: "2-3 дня"
-    },
-    {
-      id: 3,
-      name: "Ремонт штока",
-      description: "Восстановление хромированного покрытия, шлифовка",
-      price: "от 5 000 ₽",
-      time: "3-5 дней"
-    },
-    {
-      id: 4,
-      name: "Капитальный ремонт",
-      description: "Полное восстановление с заменой всех изношенных деталей",
-      price: "от 15 000 ₽",
-      time: "10-14 дней"
-    }
-  ];
-
-  const handleSubmitRequest = (e) => {
+  const handleSubmitRequest = async (e) => {
     e.preventDefault();
-    
+    setError("");
+
     if (!currentUser) {
       alert("Для отправки заявки необходимо войти в аккаунт");
       return;
     }
-    
-    const repairRequest = {
-      id: Date.now(),
-      userId: currentUser.id,
-      service: selectedService.name,
-      ...formData,
-      status: "новая",
-      createdAt: new Date().toLocaleString()
-    };
-    
-    const requests = JSON.parse(localStorage.getItem(`repair_requests_${currentUser.id}`) || "[]");
-    requests.push(repairRequest);
-    localStorage.setItem(`repair_requests_${currentUser.id}`, JSON.stringify(requests));
-    
-    alert(`Заявка отправлена!\nГород: ${formData.city}\nМы свяжемся с вами`);
-    
-    setSelectedService(null);
-    setFormData({ name: "", phone: "", city: "Актау", problem: "" });
+
+    try {
+      await apiRequest("/repair-requests/", {
+        method: "POST",
+        body: JSON.stringify({
+          service_id: selectedService.id,
+          name: formData.name,
+          phone: formData.phone,
+          city: formData.city,
+          problem: formData.problem,
+        }),
+      });
+
+      alert(`Заявка отправлена!\nГород: ${formData.city}\nМы свяжемся с вами`);
+
+      setSelectedService(null);
+      setFormData({
+        name: currentUser?.name || "",
+        phone: currentUser?.phone || "",
+        city: "Актау",
+        problem: "",
+      });
+    } catch (err) {
+      console.error(err);
+      setError(`Не удалось отправить заявку: ${err.message}`);
+    }
   };
 
   if (selectedService) {
@@ -74,11 +54,17 @@ const RepairService = ({ currentUser }) => {
           <button onClick={() => setSelectedService(null)} className="back-btn">
             Назад к услугам
           </button>
-          
+
           <div className="repair-form-container">
             <h2>{selectedService.name}</h2>
-            <p className="service-price">Цена: {selectedService.price}</p>
-            
+            <p className="service-price">Цена: {selectedService.price_display}</p>
+
+            {error && (
+              <div className="auth-error">
+                {error}
+              </div>
+            )}
+
             <form onSubmit={handleSubmitRequest}>
               <div className="form-group">
                 <label>Ваше имя *</label>
@@ -90,24 +76,22 @@ const RepairService = ({ currentUser }) => {
                   placeholder="Иванов Иван"
                 />
               </div>
-              
-              <div className="form-group">
 
-                <label>Email *</label>
+              <div className="form-group">
+                <label>Телефон *</label>
 
                 <input
-                  type="email"
+                  type="tel"
                   required
-                  value={formData.email}
+                  value={formData.phone}
                   onChange={(e) =>
                     setFormData({
                       ...formData,
-                      email: e.target.value
+                      phone: e.target.value
                     })
                   }
-                  placeholder="example@mail.com"
+                  placeholder="+7 (700) 123-45-67"
                 />
-
               </div>
 
               <div className="form-group">
@@ -121,7 +105,7 @@ const RepairService = ({ currentUser }) => {
                   <option value="Атырау">Атырау</option>
                 </select>
               </div>
-              
+
               <div className="form-group">
                 <label>Описание проблемы</label>
                 <textarea
@@ -131,7 +115,7 @@ const RepairService = ({ currentUser }) => {
                   placeholder="Опишите неисправность"
                 />
               </div>
-              
+
               <button type="submit" className="submit-repair-btn">
                 Отправить заявку
               </button>
@@ -147,7 +131,7 @@ const RepairService = ({ currentUser }) => {
       <div className="container">
         <h2>Ремонт гидроцилиндров</h2>
         <p className="repair-subtitle">Профессиональный ремонт с гарантией 12 месяцев</p>
-        
+
         <div className="cities-block">
           <div className="cities-title">Работаем в городах:</div>
           <div className="cities-tags">
@@ -155,22 +139,26 @@ const RepairService = ({ currentUser }) => {
             <span className="city-tag">Атырау</span>
           </div>
         </div>
-        
+
         <div className="repair-grid">
-          {repairServices.map(service => (
-            <div className="repair-card" key={service.id}>
-              <h3>{service.name}</h3>
-              <p>{service.description}</p>
-              <div className="repair-price">{service.price}</div>
-              <div className="repair-time">{service.time}</div>
-              <button 
-                className="repair-order-btn"
-                onClick={() => setSelectedService(service)}
-              >
-                Заказать ремонт
-              </button>
-            </div>
-          ))}
+          {services.length === 0 ? (
+            <p>Услуги ремонта пока не добавлены</p>
+          ) : (
+            services.map(service => (
+              <div className="repair-card" key={service.id}>
+                <h3>{service.name}</h3>
+                <p>{service.description}</p>
+                <div className="repair-price">{service.price_display}</div>
+                <div className="repair-time">{service.turnaround}</div>
+                <button
+                  className="repair-order-btn"
+                  onClick={() => setSelectedService(service)}
+                >
+                  Заказать ремонт
+                </button>
+              </div>
+            ))
+          )}
         </div>
       </div>
     </section>

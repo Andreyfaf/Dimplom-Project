@@ -1,5 +1,6 @@
 import "./Catalog.css";
 import React from "react";
+import { cleanPriceDisplay } from "../../api";
 
 const Catalog = ({
   products,
@@ -42,7 +43,6 @@ const Catalog = ({
           style={{ cursor: "pointer" }}
         >
 
-          {/* IMAGE */}
           <div className="product-image">
 
             {product.image ? (
@@ -77,7 +77,6 @@ const Catalog = ({
 
           </div>
 
-          {/* CONTENT */}
           <div className="product-content">
 
             <h3>{product.name}</h3>
@@ -87,7 +86,7 @@ const Catalog = ({
             </p>
 
             <div className="price">
-              {product.price_display}
+              {cleanPriceDisplay(product.price_display)}
             </div>
 
             <button

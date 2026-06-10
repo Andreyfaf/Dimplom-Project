@@ -1,21 +1,23 @@
 import React, { useEffect, useState } from "react";
+import { apiRequest, cleanPriceDisplay } from "../../api";
 
 import "./Profile.css";
 
 const Profile = ({ currentUser }) => {
-
   const [orders, setOrders] = useState([]);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-
     if (!currentUser) return;
 
-    const savedOrders = JSON.parse(
-      localStorage.getItem(`orders_${currentUser.id}`) || "[]"
-    );
-
-    setOrders(savedOrders);
-
+    apiRequest("/orders/")
+      .then((data) => {
+        setOrders(data || []);
+      })
+      .catch((err) => {
+        console.error(err);
+        setError(`Не удалось загрузить заказы: ${err.message}`);
+      });
   }, [currentUser]);
 
   if (!currentUser) {
@@ -30,15 +32,12 @@ const Profile = ({ currentUser }) => {
 
   return (
     <div className="profile-page">
-
       <div className="profile-container">
-
         <h1 className="profile-title">
           Личный кабинет
         </h1>
 
         <div className="profile-card">
-
           <h2>Информация о пользователе</h2>
 
           <div className="profile-info">
@@ -50,32 +49,29 @@ const Profile = ({ currentUser }) => {
               <strong>Email:</strong> {currentUser.email}
             </p>
           </div>
-
         </div>
 
         <div className="profile-card">
-
           <h2>История заказов</h2>
 
-          {orders.length === 0 ? (
+          {error && (
+            <p className="no-orders">
+              {error}
+            </p>
+          )}
 
+          {orders.length === 0 ? (
             <p className="no-orders">
               У вас пока нет заказов
             </p>
-
           ) : (
-
             <div className="orders-list">
-
               {orders.map((order) => (
-
                 <div
                   key={order.id}
                   className="order-card"
                 >
-
                   <div className="order-header">
-
                     <h3>
                       Заказ №{order.id}
                     </h3>
@@ -83,57 +79,38 @@ const Profile = ({ currentUser }) => {
                     <span className="order-status">
                       {order.status}
                     </span>
-
                   </div>
 
                   <p className="order-date">
-                    {order.date}
+                    {new Date(order.created_at).toLocaleString()}
                   </p>
 
                   <div className="order-products">
-
-                    {order.items.map((item, index) => (
-
+                    {order.items.map((item) => (
                       <div
-                        key={index}
+                        key={item.id}
                         className="order-product"
                       >
-
-                        <img
-                          src={item.image}
-                          alt={item.name}
-                        />
-
                         <div>
-                          <h4>{item.name}</h4>
+                          <h4>{item.product_name}</h4>
 
                           <p>
-                            {item.price_display}
+                            {cleanPriceDisplay(item.price_display)} × {item.quantity}
                           </p>
                         </div>
-
                       </div>
-
                     ))}
-
                   </div>
 
                   <div className="order-total">
-                    Итого: {order.total.toLocaleString()} ₽
+                    Итого: {order.total_amount.toLocaleString()} ₽
                   </div>
-
                 </div>
-
               ))}
-
             </div>
-
           )}
-
         </div>
-
       </div>
-
     </div>
   );
 };
