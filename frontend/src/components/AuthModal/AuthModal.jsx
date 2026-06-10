@@ -23,29 +23,11 @@ const AuthModal = ({ isOpen, onClose, onLogin }) => {
     setError("");
   };
 
-  const transferGuestCart = (userId) => {
-    const guestCart = localStorage.getItem("cart_guest");
-
-    if (guestCart) {
-      const guestItems = JSON.parse(guestCart);
-
-      if (guestItems.length > 0) {
-        localStorage.setItem(
-          `cart_${userId}`,
-          JSON.stringify(guestItems)
-        );
-
-        localStorage.removeItem("cart_guest");
-      }
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     setError("");
 
-    // Проверка регистрации
     if (!isLogin) {
 
       if (formData.password !== formData.confirmPassword) {
@@ -103,9 +85,15 @@ const AuthModal = ({ isOpen, onClose, onLogin }) => {
           data.email?.[0] ||
           data.password?.[0] ||
           data.non_field_errors?.[0] ||
+          data.error ||
           "Ошибка авторизации"
         );
 
+        return;
+      }
+
+      if (!data.token) {
+        setError("Сервер не вернул токен. Перезапустите Django и войдите заново.");
         return;
       }
 
@@ -115,8 +103,6 @@ const AuthModal = ({ isOpen, onClose, onLogin }) => {
         "currentUser",
         JSON.stringify(data.user)
       );
-
-      transferGuestCart(data.user.id);
 
       onLogin(data);
 

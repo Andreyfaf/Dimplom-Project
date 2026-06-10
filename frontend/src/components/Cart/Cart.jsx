@@ -1,49 +1,50 @@
 import "./Cart.css";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { apiRequest, cleanPriceDisplay, getToken } from "../../api";
 
 const Cart = ({ currentUser, openAuthModal }) => {
-
   const [cartItems, setCartItems] = useState([]);
-
   const [showOrderForm, setShowOrderForm] = useState(false);
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
   const [orderData, setOrderData] = useState({
     name: currentUser?.name || "",
-    email: currentUser?.email || "",
+    phone: currentUser?.phone || "",
     address: "",
   });
 
-  useEffect(() => {
+  const loadCart = async () => {
+    if (!currentUser) return;
 
-    if (currentUser) {
+    setIsLoading(true);
+    setError("");
 
-      const saved = localStorage.getItem(
-        `cart_${currentUser.id}`
-      );
-
-      if (saved) {
-        setCartItems(JSON.parse(saved));
-      }
-
+    try {
+      const items = await apiRequest("/cart/");
+      setCartItems(items || []);
+    } catch (err) {
+      console.error(err);
+      setError(`Не удалось загрузить корзину: ${err.message}`);
+    } finally {
+      setIsLoading(false);
     }
+  };
 
+  useEffect(() => {
+    loadCart();
   }, [currentUser]);
 
   if (!currentUser) {
-
     return (
       <div className="cart-auth-page">
-
         <div className="container">
-
           <h2>
-            Корзина доступна только
-            авторизованным пользователям
+            Корзина доступна только авторизованным пользователям
           </h2>
 
           <p>
-            Войдите или зарегистрируйтесь,
-            чтобы оформлять заказы
+            Войдите или зарегистрируйтесь, чтобы оформлять заказы
           </p>
 
           <button
@@ -52,95 +53,86 @@ const Cart = ({ currentUser, openAuthModal }) => {
           >
             Войти / Зарегистрироваться
           </button>
-
         </div>
-
       </div>
     );
-
   }
 
-  const removeItem = (index) => {
+  const removeItem = async (cartItemId) => {
+    setError("");
 
-    const newCart = [...cartItems];
+    try {
+      await apiRequest(`/cart/items/${cartItemId}/`, {
+        method: "DELETE",
+      });
 
-    newCart.splice(index, 1);
-
-    localStorage.setItem(
-      `cart_${currentUser.id}`,
-      JSON.stringify(newCart)
-    );
-
-    setCartItems(newCart);
-
+      setCartItems((items) =>
+        items.filter((item) => item.id !== cartItemId)
+      );
+    } catch (err) {
+      console.error(err);
+      setError(`Не удалось удалить товар: ${err.message}`);
+    }
   };
 
-  const clearCart = () => {
+  const clearCart = async () => {
+    setError("");
 
-    localStorage.setItem(
-      `cart_${currentUser.id}`,
-      JSON.stringify([])
-    );
+    try {
+      await apiRequest("/cart/clear/", {
+        method: "DELETE",
+      });
 
-    setCartItems([]);
-
+      setCartItems([]);
+    } catch (err) {
+      console.error(err);
+      setError(`Не удалось очистить корзину: ${err.message}`);
+    }
   };
 
   const totalSum = cartItems.reduce((sum, item) => {
-
-    const price = parseInt(
-      (item.price_display || "0")
-      .replace(/[^\d]/g, "")
-    );
-
-    return sum + price;
-
+    return sum + (item.line_total || 0);
   }, 0);
 
-  const handleOrderSubmit = (e) => {
-
+  const handleOrderSubmit = async (e) => {
     e.preventDefault();
+    setError("");
 
-    const order = {
-      id: Date.now(),
-      userId: currentUser.id,
-      items: cartItems,
-      total: totalSum,
-      ...orderData,
-      date: new Date().toLocaleString(),
-      status: "новый",
-    };
+    if (!getToken()) {
+      const message = "Не удалось отправить заказ: нет токена авторизации. Войдите заново.";
+      setError(message);
+      alert(message);
+      return;
+    }
 
-    const orders = JSON.parse(
-      localStorage.getItem(
-        `orders_${currentUser.id}`
-      ) || "[]"
-    );
+    setIsSubmitting(true);
 
-    orders.push(order);
+    try {
+      const order = await apiRequest("/orders/", {
+        method: "POST",
+        body: JSON.stringify(orderData),
+      });
 
-    localStorage.setItem(
-      `orders_${currentUser.id}`,
-      JSON.stringify(orders)
-    );
+      setCartItems([]);
+      setShowOrderForm(false);
 
-    clearCart();
-
-    setShowOrderForm(false);
-
-    alert(
-      `Заказ оформлен!\nСумма: ${totalSum} ₽`
-    );
-
+      alert(
+        `Спасибо за заказ!\nСумма: ${(order.total_amount || totalSum).toLocaleString()} ₽`
+      );
+    } catch (err) {
+      console.error(err);
+      const message = err.message || "Не удалось отправить заказ.";
+      setError(message);
+      alert(`Не удалось отправить заказ: ${message}`);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (showOrderForm) {
-
     return (
       <div className="cart-page">
-
         <div className="container">
-
           <h1 className="cart-title">
             Оформление заказа
           </h1>
@@ -149,9 +141,13 @@ const Cart = ({ currentUser, openAuthModal }) => {
             onSubmit={handleOrderSubmit}
             className="order-form-modern"
           >
+            {error && (
+              <div className="auth-error">
+                {error}
+              </div>
+            )}
 
             <div className="form-group">
-
               <label>Ваше имя *</label>
 
               <input
@@ -165,29 +161,26 @@ const Cart = ({ currentUser, openAuthModal }) => {
                   })
                 }
               />
-
             </div>
 
             <div className="form-group">
-
-              <label>Email *</label>
+              <label>Телефон *</label>
 
               <input
-                type="email"
+                type="tel"
                 required
-                value={orderData.email}
+                value={orderData.phone}
                 onChange={(e) =>
                   setOrderData({
                     ...orderData,
-                    email: e.target.value,
+                    phone: e.target.value,
                   })
                 }
+                placeholder="+7 (700) 123-45-67"
               />
-
             </div>
 
             <div className="form-group">
-
               <label>Адрес доставки</label>
 
               <input
@@ -201,16 +194,12 @@ const Cart = ({ currentUser, openAuthModal }) => {
                 }
                 placeholder="Самовывоз — оставьте пустым"
               />
-
             </div>
 
             <div className="cart-buttons">
-
               <button
                 type="button"
-                onClick={() =>
-                  setShowOrderForm(false)
-                }
+                onClick={() => setShowOrderForm(false)}
                 className="cancel-btn"
               >
                 Назад
@@ -219,100 +208,83 @@ const Cart = ({ currentUser, openAuthModal }) => {
               <button
                 type="submit"
                 className="submit-order-btn"
+                disabled={isSubmitting}
               >
                 Подтвердить заказ
               </button>
-
             </div>
-
           </form>
-
         </div>
-
       </div>
     );
-
   }
 
   return (
     <div className="cart-page">
-
       <div className="container">
-
         <h1 className="cart-title">
           Корзина ({cartItems.length})
         </h1>
 
-        {cartItems.length === 0 ? (
-
-          <div className="empty-cart">
-
-            <h2>Корзина пуста</h2>
-
-            <p>
-              Добавьте товары в корзину
-            </p>
-
+        {error && (
+          <div className="auth-error">
+            {error}
           </div>
+        )}
 
+        {isLoading ? (
+          <div className="empty-cart">
+            <h2>Загрузка корзины...</h2>
+          </div>
+        ) : cartItems.length === 0 ? (
+          <div className="empty-cart">
+            <h2>Корзина пуста</h2>
+            <p>Добавьте товары в корзину</p>
+          </div>
         ) : (
-
           <>
-
             <div className="cart-list">
-
-              {cartItems.map((item, index) => (
-
+              {cartItems.map((item) => (
                 <div
-                  key={index}
+                  key={item.id}
                   className="cart-item-modern"
                 >
-
                   <div className="cart-item-left">
-
                     <img
-                      src={item.image}
-                      alt={item.name}
+                      src={item.product?.image}
+                      alt={item.product?.name}
                       className="cart-item-image"
                     />
 
                     <div>
-
-                      <h3>{item.name}</h3>
+                      <h3>{item.product?.name}</h3>
 
                       <p className="cart-price">
-                        {item.price_display}
+                        {cleanPriceDisplay(item.product?.price_display)}
                       </p>
 
+                      <p>
+                        Количество: {item.quantity}
+                      </p>
                     </div>
-
                   </div>
 
                   <button
-                    onClick={() =>
-                      removeItem(index)
-                    }
+                    onClick={() => removeItem(item.id)}
                     className="remove-btn"
                   >
                     Удалить
                   </button>
-
                 </div>
-
               ))}
-
             </div>
 
             <div className="cart-total-modern">
-
               <h3>
-                Итого:
-                {" "}
-                {totalSum.toLocaleString()} ₽
+                Итого: {totalSum.toLocaleString()} ₽
               </h3>
 
               <div className="cart-buttons">
-
                 <button
                   onClick={clearCart}
                   className="clear-btn"
@@ -321,27 +293,18 @@ const Cart = ({ currentUser, openAuthModal }) => {
                 </button>
 
                 <button
-                  onClick={() =>
-                    setShowOrderForm(true)
-                  }
+                  onClick={() => setShowOrderForm(true)}
                   className="order-btn"
                 >
                   Оформить заказ
                 </button>
-
               </div>
-
             </div>
-
           </>
-
         )}
-
       </div>
-
     </div>
   );
-
 };
 
 export default Cart;

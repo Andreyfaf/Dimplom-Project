@@ -2,7 +2,7 @@ import re
 
 from rest_framework import serializers
 
-NAME_PATTERN = re.compile(r"^[A-Za-zА-Яа-яЁёІіЇїЄєҚқҢңҒғҮүҰұҺһӘәӨө\s'-]{2,80}$", re.UNICODE)
+NAME_PATTERN = re.compile(r"^[A-Za-zА-Яа-яЁёӘәІіҢңҒғҮүҰұҚқӨөҺһ\s'-]{2,80}$", re.UNICODE)
 PHONE_PATTERN = re.compile(r"^\+?[0-9\s()\-]{10,20}$")
 
 

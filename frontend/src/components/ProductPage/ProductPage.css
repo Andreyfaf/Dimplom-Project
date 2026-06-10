@@ -16,8 +16,8 @@
   gap: 40px;
   background: white;
   padding: 40px;
-  border-radius: 20px;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
 .product-image-block {
@@ -26,7 +26,7 @@
 
 .product-main-image {
   width: 100%;
-  border-radius: 20px;
+  border-radius: 16px;
   object-fit: cover;
 }
 
@@ -68,31 +68,11 @@
   color: #444;
 }
 
-.details-btn {
-  margin-top: 15px;
-  padding: 12px 24px;
-  background: #005792;
-  color: white;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  font-size: 18px;
-}
-
-.recommendations-list {
-  padding-left: 20px;
-}
-
-.recommendations-list li {
-  margin-bottom: 10px;
-  font-size: 20px;
-}
-
 .add-cart-btn-big {
   width: 100%;
   padding: 22px;
   border: none;
-  border-radius: 18px;
+  border-radius: 12px;
   background: #f28c18;
   color: white;
   font-size: 30px;
@@ -115,7 +95,7 @@
   margin-top: 50px;
   background: white;
   padding: 40px;
-  border-radius: 20px;
+  border-radius: 16px;
 }
 
 .specs-block h2 {
