@@ -1,5 +1,6 @@
 import React from "react";
 import "./ProductPage.css";
+import { cleanPriceDisplay } from "../../api";
 
 const ProductPage = ({ product, onAddToCart, onBack, currentUser }) => {
   if (!product) return null;
@@ -32,7 +33,7 @@ const ProductPage = ({ product, onAddToCart, onBack, currentUser }) => {
             </div>
 
             <div className="product-price">
-              {product.price_display}
+              {cleanPriceDisplay(product.price_display)}
             </div>
 
             <div className="product-section">
@@ -62,7 +63,7 @@ const ProductPage = ({ product, onAddToCart, onBack, currentUser }) => {
               className="add-cart-btn-big"
               onClick={() => onAddToCart(product)}
             >
-              Добавить в корзину — {product.price_display}
+              Добавить в корзину — {cleanPriceDisplay(product.price_display)}
             </button>
 
             {!currentUser && (

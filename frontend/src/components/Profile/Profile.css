@@ -18,10 +18,10 @@
 
 .profile-card {
   background: white;
-  border-radius: 20px;
+  border-radius: 16px;
   padding: 30px;
   margin-bottom: 30px;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
 .profile-card h2 {
@@ -46,7 +46,7 @@
 
 .order-card {
   border: 1px solid #e3e3e3;
-  border-radius: 16px;
+  border-radius: 12px;
   padding: 20px;
   background: #fafafa;
 }
@@ -65,7 +65,7 @@
   background: #28a745;
   color: white;
   padding: 6px 14px;
-  border-radius: 30px;
+  border-radius: 16px;
   font-size: 14px;
 }
 

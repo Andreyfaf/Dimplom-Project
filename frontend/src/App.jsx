@@ -9,77 +9,62 @@ import Cart from "./components/Cart/Cart";
 import AuthModal from "./components/AuthModal/AuthModal";
 import ProductPage from "./components/ProductPage/ProductPage";
 import RepairService from "./components/RepairService";
+import { API_URL, apiRequest } from "./api";
 
 import "./App.css";
 
-const API_URL = "/api";
-
 function App() {
   const [page, setPage] = useState("home");
-
   const [currentUser, setCurrentUser] = useState(null);
-
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-
   const [selectedProduct, setSelectedProduct] = useState(null);
-
   const [products, setProducts] = useState([]);
-
   const [contactInfo, setContactInfo] = useState(null);
-
   const [repairServices, setRepairServices] = useState([]);
-
   const [team, setTeam] = useState([]);
 
-  // =========================
-// Загрузка пользователя
-// =========================
+  useEffect(() => {
+    const savedUser = localStorage.getItem("currentUser");
+    const savedToken = localStorage.getItem("token");
+    const hasToken =
+      savedToken &&
+      savedToken !== "undefined" &&
+      savedToken !== "null";
 
-useEffect(() => {
+    if (
+      savedUser &&
+      savedUser !== "undefined" &&
+      savedUser !== "null"
+    ) {
+      if (!hasToken) {
+        localStorage.removeItem("currentUser");
+        localStorage.removeItem("token");
+        setIsAuthModalOpen(true);
+        return;
+      }
 
-  const savedUser = localStorage.getItem("currentUser");
-
-  if (
-    savedUser &&
-    savedUser !== "undefined" &&
-    savedUser !== "null"
-  ) {
-    try {
-      setCurrentUser(JSON.parse(savedUser));
-    } catch (error) {
-      console.error("Ошибка чтения currentUser:", error);
-
-      localStorage.removeItem("currentUser");
+      try {
+        setCurrentUser(JSON.parse(savedUser));
+      } catch (error) {
+        console.error("Ошибка чтения currentUser:", error);
+        localStorage.removeItem("currentUser");
+      }
     }
-  }
-
-}, []);
-  // =========================
-  // Загрузка данных из Django
-  // =========================
+  }, []);
 
   useEffect(() => {
     fetch(`${API_URL}/bootstrap/`)
       .then((res) => res.json())
       .then((data) => {
-        console.log("BOOTSTRAP:", data);
-
         setProducts(data.products || []);
-
         setContactInfo(data.contact_info || null);
-
         setRepairServices(data.repair_services || []);
-
         setTeam(data.team || []);
       })
       .catch((err) => {
         console.error("Ошибка загрузки API:", err);
       });
   }, []);
-
-  // =========================
-  // LOGIN
-  // =========================
 
   const handleLogin = (data) => {
     setCurrentUser(data.user);
@@ -97,23 +82,12 @@ useEffect(() => {
     closeAuthModal();
   };
 
-  // =========================
-  // LOGOUT
-  // =========================
-
   const handleLogout = () => {
     localStorage.removeItem("currentUser");
-
     localStorage.removeItem("token");
-
     setCurrentUser(null);
-
     setPage("home");
   };
-
-  // =========================
-  // AUTH MODAL
-  // =========================
 
   const openAuthModal = () => {
     setIsAuthModalOpen(true);
@@ -123,51 +97,38 @@ useEffect(() => {
     setIsAuthModalOpen(false);
   };
 
-  // =========================
-  // PRODUCT PAGE
-  // =========================
-
   const handleProductClick = (product) => {
     setSelectedProduct(product);
-
     setPage("product");
   };
 
   const handleBackToCatalog = () => {
     setSelectedProduct(null);
-
     setPage("catalog");
   };
 
-  // =========================
-  // ADD TO CART
-  // =========================
+  const addToCart = async (product) => {
+    if (!currentUser) {
+      alert("Для добавления в корзину необходимо войти!");
+      openAuthModal();
+      return;
+    }
 
-const addToCart = (product) => {
+    try {
+      await apiRequest("/cart/items/", {
+        method: "POST",
+        body: JSON.stringify({
+          product_id: product.id,
+          quantity: 1,
+        }),
+      });
 
-  if (!currentUser) {
-    alert("Для добавления в корзину необходимо войти!");
-
-    openAuthModal();
-
-    return;
-  }
-
-  const cartKey = `cart_${currentUser.id}`;
-
-  const existingCart = JSON.parse(
-    localStorage.getItem(cartKey) || "[]"
-  );
-
-  existingCart.push(product);
-
-  localStorage.setItem(
-    cartKey,
-    JSON.stringify(existingCart)
-  );
-
-  alert(`${product.name} добавлен в корзину!`);
-};
+      alert(`${product.name} добавлен в корзину!`);
+    } catch (err) {
+      console.error(err);
+      alert(`Не удалось добавить товар: ${err.message}`);
+    }
+  };
 
   return (
     <div>
@@ -185,8 +146,6 @@ const addToCart = (product) => {
         onLogin={handleLogin}
       />
 
-      {/* HOME */}
-
       {page === "home" && (
         <>
           <Hero setPage={setPage} />
@@ -198,18 +157,14 @@ const addToCart = (product) => {
         </>
       )}
 
-      {/* CATALOG */}
-
       {page === "catalog" && (
         <CatalogPage
           products={products}
           currentUser={currentUser}
           onProductClick={handleProductClick}
           onAddToCart={addToCart}
-/>
+        />
       )}
-
-      {/* PRODUCT */}
 
       {page === "product" && (
         <ProductPage
@@ -219,8 +174,6 @@ const addToCart = (product) => {
           currentUser={currentUser}
         />
       )}
-
-      {/* REPAIR */}
 
       {page === "repair" && (
         <RepairService
