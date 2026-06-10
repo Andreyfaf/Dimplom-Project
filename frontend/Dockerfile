@@ -1,6 +1,6 @@
 FROM node:20-alpine AS builder
 
-ARG VITE_API_URL=http://backend:8000/api
+ARG VITE_API_URL=http://45.153.71.137:8000
 ENV VITE_API_URL=$VITE_API_URL
 
 WORKDIR /app
