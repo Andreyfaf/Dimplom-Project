@@ -71,8 +71,10 @@ class RegisterView(APIView):
             password=password,
             first_name=name
         )
+        token, _ = Token.objects.get_or_create(user=user)
 
         return Response({
+            "token": token.key,
             "user": {
                 "id": user.id,
                 "username": user.username,
@@ -98,7 +100,10 @@ class LoginView(APIView):
                 status=400
             )
 
+        token, _ = Token.objects.get_or_create(user=user)
+
         return Response({
+            "token": token.key,
             "user": {
                 "id": user.id,
                 "username": user.username,
