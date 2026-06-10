@@ -10,7 +10,7 @@ const Hero = ({ setPage }) => {
     <section className="hero" style={{ backgroundImage: `url(${workProcess})` }}>
       <div className="hero-text">
         <h2>Продажа и ремонт гидроцилиндров</h2>
-        <p>Быстро, надёжно, с гарантией!</p>
+        <p>Быстро, надёжно, с гарантией 12 месяцев!</p>
         <button onClick={goToCatalog} className="btn-primary">
           Смотреть каталог
         </button>
