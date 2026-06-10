@@ -93,7 +93,8 @@ class CartItem(models.Model):
         ordering = ["-created_at"]
 
     def __str__(self):
-        return f"{self.user.phone}: {self.product.name} x{self.quantity}"
+        user_contact = getattr(self.user, "phone", None) or self.user.username
+        return f"{user_contact}: {self.product.name} x{self.quantity}"
 
 
 class Order(models.Model):
