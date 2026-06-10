@@ -67,8 +67,8 @@ const AuthModal = ({ isOpen, onClose, onLogin }) => {
     try {
 
       const url = isLogin
-        ? "http://127.0.0.1:8000/api/auth/login/"
-        : "http://127.0.0.1:8000/api/auth/register/";
+        ? "/api/auth/login/"
+        : "/api/auth/register/";
 
       const bodyData = isLogin
         ? {
