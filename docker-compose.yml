@@ -18,6 +18,7 @@ services:
       - "80:80"
     volumes:
       - ./backend/media:/app/media   # монтируем папку media из backend в nginx
+      - ./backend/staticfiles:/app/staticfiles
     depends_on:
       - backend
     restart: unless-stopped
