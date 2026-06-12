@@ -9,33 +9,15 @@ const CatalogPage = ({
 }) => {
 
   return (
-    <div
-      style={{
-        padding: "70px 0",
-      }}
-    >
+    <div className="catalog-page">
 
       <div className="container">
 
-        <h1
-          style={{
-            marginBottom: "10px",
-            marginLeft: "40px",
-            fontSize: "52px",
-            color: "#1e2b3a",
-          }}
-        >
+        <h1 className="catalog-page-title">
           Каталог гидроцилиндров
         </h1>
 
-        <p
-          style={{
-            marginBottom: "50px",
-            marginLeft: "40px",
-            color: "#666",
-            fontSize: "22px",
-          }}
-        >
+        <p className="catalog-page-subtitle">
           Широкий выбор гидроцилиндров
           для экскаваторов,
           прессов и спецтехники

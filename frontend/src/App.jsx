@@ -195,7 +195,10 @@ function App() {
         />
       )}
 
-      <Footer />
+      <Footer
+        setPage={setPage}
+        contactInfo={contactInfo}
+      />
     </div>
   );
 }

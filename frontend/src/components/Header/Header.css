@@ -13,8 +13,10 @@
   margin: 0 auto;
 
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
+  gap: 18px;
 }
 
 .logo-block {
@@ -89,4 +91,71 @@
 
 .logout-btn:hover {
   color: #ff9800;
+}
+
+@media (max-width: 1024px) {
+  .header {
+    padding: 14px 0;
+  }
+
+  .logo-image {
+    width: 72px;
+    height: 72px;
+  }
+
+  .logo-text {
+    font-size: 28px;
+  }
+
+  .nav-menu {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+    gap: 26px;
+  }
+}
+
+@media (max-width: 768px) {
+  .header {
+    position: static;
+  }
+
+  .header-container {
+    justify-content: center;
+    text-align: center;
+  }
+
+  .logo-block {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .logo-image {
+    width: 64px;
+    height: 64px;
+  }
+
+  .logo-text {
+    font-size: 26px;
+  }
+
+  .nav-menu {
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .nav-link {
+    font-size: 17px;
+  }
+
+  .user-block {
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+  }
+
+  .user-name,
+  .logout-btn {
+    font-size: 16px;
+  }
 }

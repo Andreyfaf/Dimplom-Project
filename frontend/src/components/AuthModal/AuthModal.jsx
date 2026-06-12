@@ -1,5 +1,8 @@
 import "./AuthModal.css";
 import { useState } from "react";
+import ReactModal from "react-modal";
+
+ReactModal.setAppElement("#root");
 
 const AuthModal = ({ isOpen, onClose, onLogin }) => {
 
@@ -49,8 +52,8 @@ const AuthModal = ({ isOpen, onClose, onLogin }) => {
     try {
 
       const url = isLogin
-        ? "/api/auth/login/"
-        : "/api/auth/register/";
+        ? "http://127.0.0.1:8000/api/auth/login/"
+        : "http://127.0.0.1:8000/api/auth/register/";
 
       const bodyData = isLogin
         ? {
@@ -124,18 +127,14 @@ const AuthModal = ({ isOpen, onClose, onLogin }) => {
     }
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div
-      className="modal-overlay"
-      onClick={onClose}
+    <ReactModal
+      isOpen={isOpen}
+      onRequestClose={onClose}
+      className="auth-modal"
+      overlayClassName="modal-overlay"
+      contentLabel={isLogin ? "Вход в аккаунт" : "Регистрация"}
     >
-
-      <div
-        className="auth-modal"
-        onClick={(e) => e.stopPropagation()}
-      >
 
         <button
           className="auth-modal-close"
@@ -280,9 +279,7 @@ const AuthModal = ({ isOpen, onClose, onLogin }) => {
 
         </div>
 
-      </div>
-
-    </div>
+    </ReactModal>
   );
 };
 
