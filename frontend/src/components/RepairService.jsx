@@ -1,22 +1,31 @@
 import { useState } from "react";
 import { apiRequest } from "../api";
 
-const RepairService = ({ currentUser, services = [] }) => {
+const RepairService = ({ currentUser, services = [], onShowPopup }) => {
   const [selectedService, setSelectedService] = useState(null);
   const [formData, setFormData] = useState({
     name: currentUser?.name || "",
     phone: currentUser?.phone || "",
     city: "Актау",
-    problem: ""
+    problem: "",
   });
   const [error, setError] = useState("");
+
+  const showMessage = (title, message) => {
+    if (onShowPopup) {
+      onShowPopup(title, message);
+    }
+  };
 
   const handleSubmitRequest = async (e) => {
     e.preventDefault();
     setError("");
 
     if (!currentUser) {
-      alert("Для отправки заявки необходимо войти в аккаунт");
+      showMessage(
+        "Требуется вход",
+        "Для отправки заявки необходимо войти в аккаунт."
+      );
       return;
     }
 
@@ -32,7 +41,10 @@ const RepairService = ({ currentUser, services = [] }) => {
         }),
       });
 
-      alert(`Заявка отправлена!\nГород: ${formData.city}\nМы свяжемся с вами`);
+      showMessage(
+        "Заявка отправлена!",
+        `Город: ${formData.city}. Мы свяжемся с вами.`
+      );
 
       setSelectedService(null);
       setFormData({
@@ -72,7 +84,12 @@ const RepairService = ({ currentUser, services = [] }) => {
                   type="text"
                   required
                   value={formData.name}
-                  onChange={(e) => setFormData({...formData, name: e.target.value})}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      name: e.target.value,
+                    })
+                  }
                   placeholder="Иванов Иван"
                 />
               </div>
@@ -87,7 +104,7 @@ const RepairService = ({ currentUser, services = [] }) => {
                   onChange={(e) =>
                     setFormData({
                       ...formData,
-                      phone: e.target.value
+                      phone: e.target.value,
                     })
                   }
                   placeholder="+7 (700) 123-45-67"
@@ -99,7 +116,12 @@ const RepairService = ({ currentUser, services = [] }) => {
                 <select
                   required
                   value={formData.city}
-                  onChange={(e) => setFormData({...formData, city: e.target.value})}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      city: e.target.value,
+                    })
+                  }
                 >
                   <option value="Актау">Актау</option>
                   <option value="Атырау">Атырау</option>
@@ -111,7 +133,12 @@ const RepairService = ({ currentUser, services = [] }) => {
                 <textarea
                   rows="3"
                   value={formData.problem}
-                  onChange={(e) => setFormData({...formData, problem: e.target.value})}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      problem: e.target.value,
+                    })
+                  }
                   placeholder="Опишите неисправность"
                 />
               </div>
@@ -130,7 +157,9 @@ const RepairService = ({ currentUser, services = [] }) => {
     <section className="repair-service">
       <div className="container">
         <h2>Ремонт гидроцилиндров</h2>
-        <p className="repair-subtitle">Профессиональный ремонт с гарантией 12 месяцев</p>
+        <p className="repair-subtitle">
+          Профессиональный ремонт с гарантией 12 месяцев
+        </p>
 
         <div className="cities-block">
           <div className="cities-title">Работаем в городах:</div>
@@ -144,7 +173,7 @@ const RepairService = ({ currentUser, services = [] }) => {
           {services.length === 0 ? (
             <p>Услуги ремонта пока не добавлены</p>
           ) : (
-            services.map(service => (
+            services.map((service) => (
               <div className="repair-card" key={service.id}>
                 <h3>{service.name}</h3>
                 <p>{service.description}</p>

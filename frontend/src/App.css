@@ -45,6 +45,71 @@
   text-decoration: none;
 }
 
+/* ===== APP POPUP ===== */
+.app-popup-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.app-popup {
+  position: relative;
+  width: min(420px, 100%);
+  padding: 34px 28px 28px;
+  background: white;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.24);
+}
+
+.app-popup-close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  width: 34px;
+  height: 34px;
+  border: none;
+  background: transparent;
+  color: #666;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.app-popup h2 {
+  margin: 0 0 14px;
+  color: #004d7a;
+  font-size: 28px;
+}
+
+.app-popup p {
+  margin: 0 0 24px;
+  color: #333;
+  font-size: 18px;
+  line-height: 1.5;
+}
+
+.app-popup-button {
+  min-width: 130px;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  background: #f7931e;
+  color: white;
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.app-popup-button:hover {
+  background: #df7f12;
+}
+
 /* ===== CONTACTS ===== */
 .contacts {
   width: 100%;

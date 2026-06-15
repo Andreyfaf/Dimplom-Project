@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import ReactModal from "react-modal";
 import Profile from "./components/Profile/Profile";
 import Header from "./components/Header/Header";
 import Hero from "./components/Hero";
@@ -13,6 +14,8 @@ import { API_URL, apiRequest } from "./api";
 
 import "./App.css";
 
+ReactModal.setAppElement("#root");
+
 function App() {
   const [page, setPage] = useState("home");
   const [currentUser, setCurrentUser] = useState(null);
@@ -22,6 +25,7 @@ function App() {
   const [contactInfo, setContactInfo] = useState(null);
   const [repairServices, setRepairServices] = useState([]);
   const [team, setTeam] = useState([]);
+  const [popup, setPopup] = useState(null);
 
   useEffect(() => {
     const savedUser = localStorage.getItem("currentUser");
@@ -66,6 +70,17 @@ function App() {
       });
   }, []);
 
+  const showPopup = (title, message) => {
+    setPopup({
+      title,
+      message,
+    });
+  };
+
+  const closePopup = () => {
+    setPopup(null);
+  };
+
   const handleLogin = (data) => {
     setCurrentUser(data.user);
 
@@ -109,7 +124,10 @@ function App() {
 
   const addToCart = async (product) => {
     if (!currentUser) {
-      alert("Для добавления в корзину необходимо войти!");
+      showPopup(
+        "Требуется вход",
+        "Для добавления товара в корзину необходимо войти в аккаунт."
+      );
       openAuthModal();
       return;
     }
@@ -123,10 +141,16 @@ function App() {
         }),
       });
 
-      alert(`${product.name} добавлен в корзину!`);
+      showPopup(
+        "Товар добавлен",
+        `${product.name} добавлен в корзину.`
+      );
     } catch (err) {
       console.error(err);
-      alert(`Не удалось добавить товар: ${err.message}`);
+      showPopup(
+        "Ошибка",
+        `Не удалось добавить товар: ${err.message}`
+      );
     }
   };
 
@@ -179,6 +203,7 @@ function App() {
         <RepairService
           currentUser={currentUser}
           services={repairServices}
+          onShowPopup={showPopup}
         />
       )}
 
@@ -186,6 +211,7 @@ function App() {
         <Cart
           currentUser={currentUser}
           openAuthModal={openAuthModal}
+          onShowPopup={showPopup}
         />
       )}
 
@@ -199,6 +225,33 @@ function App() {
         setPage={setPage}
         contactInfo={contactInfo}
       />
+
+      <ReactModal
+        isOpen={Boolean(popup)}
+        onRequestClose={closePopup}
+        className="app-popup"
+        overlayClassName="app-popup-overlay"
+        contentLabel={popup?.title || "Сообщение"}
+      >
+        <button
+          type="button"
+          className="app-popup-close"
+          onClick={closePopup}
+        >
+          ×
+        </button>
+
+        <h2>{popup?.title}</h2>
+        <p>{popup?.message}</p>
+
+        <button
+          type="button"
+          className="app-popup-button"
+          onClick={closePopup}
+        >
+          Хорошо
+        </button>
+      </ReactModal>
     </div>
   );
 }
