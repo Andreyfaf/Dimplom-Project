@@ -4,7 +4,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = "django-insecure-pw(jew69eb)r=cb@o@t-mq&4z$oc*2sxcv4@gf(hno&xbr2jiw"
 DEBUG = True
-ALLOWED_HOSTS = ["127.0.0.1", "localhost", "backend", "45.153.71.137"]
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", "backend", "45.153.71.137", "metro2025.ru"]
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -16,6 +16,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "rest_framework",
     "rest_framework.authtoken",
+    "drf_spectacular",
     "api",
 ]
 
@@ -32,7 +33,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "config.urls"
 
-MEDIA_URL = "/media/"
+MEDIA_URL = "/gidrobas/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 TEMPLATES = [
@@ -93,4 +94,18 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.AllowAny",
     ],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Gidrobas API",
+    "DESCRIPTION": "REST API серверной части сайта продажи спецтехники и услуг ремонта",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SERVERS": [{"url": "/gidrobas"}],   # запросы Swagger идут на /gidrobas/api/...
+}
+
+# --- развёртывание под путём metro2025.ru/gidrobas (за nginx + HTTPS) ---
+FORCE_SCRIPT_NAME = "/gidrobas"            # префикс для ссылок Swagger и админки
+CSRF_TRUSTED_ORIGINS = ["https://metro2025.ru"]
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")

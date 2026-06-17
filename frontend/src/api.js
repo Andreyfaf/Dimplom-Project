@@ -1,4 +1,4 @@
-export const API_URL = "/api";
+export const API_URL = "/gidrobas/api";
 
 export const cleanPriceDisplay = (priceDisplay = "") =>
   priceDisplay.replace(/^\s*от\s+/i, "");

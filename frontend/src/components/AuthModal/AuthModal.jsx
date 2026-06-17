@@ -1,5 +1,6 @@
 import "./AuthModal.css";
 import { useState } from "react";
+import { API_URL } from "../../api";
 
 const AuthModal = ({ isOpen, onClose, onLogin }) => {
 
@@ -49,8 +50,8 @@ const AuthModal = ({ isOpen, onClose, onLogin }) => {
     try {
 
       const url = isLogin
-        ? "/api/auth/login/"
-        : "/api/auth/register/";
+        ? `${API_URL}/auth/login/`
+        : `${API_URL}/auth/register/`;
 
       const bodyData = isLogin
         ? {
