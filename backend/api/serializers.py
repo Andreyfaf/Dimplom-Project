@@ -105,7 +105,7 @@ class CartItemSerializer(serializers.ModelSerializer):
         model = CartItem
         fields = ["id", "product", "quantity", "line_total"]
 
-    def get_line_total(self, obj):
+    def get_line_total(self, obj) -> int:
         return obj.quantity * obj.product.price_amount
 
 
