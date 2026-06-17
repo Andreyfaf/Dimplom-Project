@@ -1,6 +1,9 @@
 import "./AuthModal.css";
 import { useState } from "react";
+import ReactModal from "react-modal";
 import { API_URL } from "../../api";
+
+ReactModal.setAppElement("#root");
 
 const AuthModal = ({ isOpen, onClose, onLogin }) => {
 
