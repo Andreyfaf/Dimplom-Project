@@ -15,7 +15,7 @@ services:
     build: ./frontend
     container_name: react-frontend
     ports:
-      - "127.0.0.1:8090:80"   # только для хостового nginx (80/8080 заняты nginx и Pterodactyl)
+      - "8090:80"   # только для хостового nginx (80/8080 заняты nginx и Pterodactyl)
     volumes:
       - ./backend/media:/app/media   # монтируем папку media из backend в nginx
       - ./backend/staticfiles:/app/staticfiles
