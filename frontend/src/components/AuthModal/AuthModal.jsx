@@ -125,18 +125,14 @@ const AuthModal = ({ isOpen, onClose, onLogin }) => {
     }
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div
-      className="modal-overlay"
-      onClick={onClose}
+    <ReactModal
+      isOpen={isOpen}
+      onRequestClose={onClose}
+      className="auth-modal"
+      overlayClassName="modal-overlay"
+      contentLabel={isLogin ? "Вход в аккаунт" : "Регистрация"}
     >
-
-      <div
-        className="auth-modal"
-        onClick={(e) => e.stopPropagation()}
-      >
 
         <button
           className="auth-modal-close"
@@ -281,9 +277,7 @@ const AuthModal = ({ isOpen, onClose, onLogin }) => {
 
         </div>
 
-      </div>
-
-    </div>
+    </ReactModal>
   );
 };
 

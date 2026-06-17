@@ -2,7 +2,7 @@ import "./Cart.css";
 import { useEffect, useState } from "react";
 import { apiRequest, cleanPriceDisplay, getToken } from "../../api";
 
-const Cart = ({ currentUser, openAuthModal }) => {
+const Cart = ({ currentUser, openAuthModal, onShowPopup }) => {
   const [cartItems, setCartItems] = useState([]);
   const [showOrderForm, setShowOrderForm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -13,6 +13,12 @@ const Cart = ({ currentUser, openAuthModal }) => {
     phone: currentUser?.phone || "",
     address: "",
   });
+
+  const showMessage = (title, message) => {
+    if (onShowPopup) {
+      onShowPopup(title, message);
+    }
+  };
 
   const loadCart = async () => {
     if (!currentUser) return;
@@ -101,7 +107,7 @@ const Cart = ({ currentUser, openAuthModal }) => {
     if (!getToken()) {
       const message = "Не удалось отправить заказ: нет токена авторизации. Войдите заново.";
       setError(message);
-      alert(message);
+      showMessage("Требуется вход", message);
       return;
     }
 
@@ -116,14 +122,15 @@ const Cart = ({ currentUser, openAuthModal }) => {
       setCartItems([]);
       setShowOrderForm(false);
 
-      alert(
-        `Спасибо за заказ!\nСумма: ${(order.total_amount || totalSum).toLocaleString()} ₽`
+      showMessage(
+        "Спасибо за заказ!",
+        `Сумма: ${(order.total_amount || totalSum).toLocaleString()} ₽`
       );
     } catch (err) {
       console.error(err);
       const message = err.message || "Не удалось отправить заказ.";
       setError(message);
-      alert(`Не удалось отправить заказ: ${message}`);
+      showMessage("Ошибка", `Не удалось отправить заказ: ${message}`);
     } finally {
       setIsSubmitting(false);
     }

@@ -123,6 +123,7 @@
 @media (max-width: 1000px) {
   .product-card-page {
     flex-direction: column;
+    padding: 30px;
   }
 
   .product-info-block h1 {
@@ -131,5 +132,88 @@
 
   .product-price {
     font-size: 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  .product-page {
+    padding: 28px 0;
+  }
+
+  .product-card-page,
+  .specs-block {
+    padding: 24px;
+  }
+
+  .product-info-block h1 {
+    font-size: 32px;
+  }
+
+  .product-price {
+    font-size: 34px;
+    margin-bottom: 24px;
+  }
+
+  .product-section h3 {
+    font-size: 22px;
+  }
+
+  .product-section p {
+    font-size: 18px;
+  }
+
+  .add-cart-btn-big {
+    padding: 16px;
+    font-size: 22px;
+  }
+
+  .specs-block {
+    margin-top: 30px;
+  }
+
+  .specs-block h2 {
+    font-size: 28px;
+  }
+
+  .specs-table,
+  .specs-table tbody,
+  .specs-table tr,
+  .specs-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .specs-table tr {
+    padding: 12px 0;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .specs-table td {
+    border-bottom: none;
+    padding: 4px 0;
+    font-size: 17px;
+  }
+
+  .specs-table td:first-child {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .product-card-page,
+  .specs-block {
+    padding: 18px;
+  }
+
+  .product-info-block h1 {
+    font-size: 28px;
+  }
+
+  .product-price {
+    font-size: 30px;
+  }
+
+  .add-cart-btn-big {
+    font-size: 19px;
   }
 }

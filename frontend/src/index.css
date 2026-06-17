@@ -15,6 +15,19 @@ body {
   font-family: Arial, sans-serif;
   background: #f5f7fa;
   color: #333;
+  overflow-x: hidden;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+img,
+video {
+  max-width: 100%;
 }
 
 /* УБИРАЕМ ВСЁ ОТ VITE */

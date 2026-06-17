@@ -1,6 +1,6 @@
 /* ===== CONTAINER ===== */
 .container {
-  width: 1200px;
+  width: min(1200px, calc(100% - 32px));
   margin: 0 auto;
 }
 
@@ -45,6 +45,71 @@
   text-decoration: none;
 }
 
+/* ===== APP POPUP ===== */
+.app-popup-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.app-popup {
+  position: relative;
+  width: min(420px, 100%);
+  padding: 34px 28px 28px;
+  background: white;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.24);
+}
+
+.app-popup-close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  width: 34px;
+  height: 34px;
+  border: none;
+  background: transparent;
+  color: #666;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.app-popup h2 {
+  margin: 0 0 14px;
+  color: #004d7a;
+  font-size: 28px;
+}
+
+.app-popup p {
+  margin: 0 0 24px;
+  color: #333;
+  font-size: 18px;
+  line-height: 1.5;
+}
+
+.app-popup-button {
+  min-width: 130px;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  background: #f7931e;
+  color: white;
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.app-popup-button:hover {
+  background: #df7f12;
+}
+
 /* ===== CONTACTS ===== */
 .contacts {
   width: 100%;
@@ -56,13 +121,15 @@
 
 .contacts-grid {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   gap: 40px;
   margin-top: 30px;
 }
 
 .contact-person {
-  width: 320px;
+  flex: 1 1 280px;
+  max-width: 360px;
   background: white;
   color: #333;
   padding: 25px;
@@ -315,6 +382,19 @@
 
 /* Адаптив */
 @media (max-width: 1024px) {
+  .hero {
+    height: 460px;
+  }
+
+  .hero-text {
+    width: 90%;
+    padding: 40px;
+  }
+
+  .hero-text h2 {
+    font-size: 36px;
+  }
+
   .repair-card {
     flex-basis: 45%;
   }
@@ -325,8 +405,60 @@
 }
 
 @media (max-width: 768px) {
+  .container {
+    width: min(100% - 24px, 1200px);
+  }
+
+  .hero {
+    height: 380px;
+    padding: 0 12px;
+  }
+
+  .hero-text {
+    width: 100%;
+    padding: 28px 20px;
+  }
+
+  .hero-text h2 {
+    font-size: 28px;
+  }
+
+  .hero-text p {
+    font-size: 18px;
+  }
+
+  .btn-primary {
+    display: inline-block;
+    padding: 12px 22px;
+  }
+
+  .contacts {
+    padding: 60px 0;
+  }
+
+  .contacts-grid {
+    gap: 20px;
+  }
+
+  .contact-person {
+    max-width: none;
+  }
+
+  .repair-service {
+    padding: 50px 0;
+  }
+
+  .repair-service h2 {
+    font-size: 28px;
+  }
+
+  .repair-subtitle {
+    margin-bottom: 28px;
+  }
+
   .repair-card {
-    max-width: 100%;
+    flex-basis: 100%;
+    max-width: none;
   }
   
   .advantage-item {
@@ -359,7 +491,6 @@
   padding: 60px 0;
   background: #f5f7fa;
   min-height: 80vh;
-  margin-left: 40px
 }
 
 .cart-title {
@@ -531,6 +662,9 @@
 /* ===== MOBILE ===== */
 
 @media (max-width: 768px) {
+  .cart-page {
+    padding: 40px 0;
+  }
 
   .cart-item-modern {
     flex-direction: column;
@@ -558,6 +692,7 @@
 
   .cart-title {
     font-size: 32px;
+    margin-bottom: 28px;
   }
 
   .cart-total-modern h3 {
@@ -565,4 +700,33 @@
     text-align: left;
   }
 
+}
+
+@media (max-width: 480px) {
+  .hero {
+    height: 330px;
+  }
+
+  .hero-text h2 {
+    font-size: 24px;
+  }
+
+  .hero-text p {
+    font-size: 16px;
+  }
+
+  .cart-item-modern,
+  .cart-total-modern,
+  .order-form-modern,
+  .repair-form-container {
+    padding: 20px;
+  }
+
+  .cart-item-modern h3 {
+    font-size: 24px;
+  }
+
+  .cart-price {
+    font-size: 24px;
+  }
 }

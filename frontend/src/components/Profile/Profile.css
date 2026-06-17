@@ -104,3 +104,46 @@
   font-weight: bold;
   color: #ff8c00;
 }
+
+@media (max-width: 768px) {
+  .profile-page {
+    padding: 35px 0;
+  }
+
+  .profile-container {
+    width: min(100% - 24px, 1100px);
+  }
+
+  .profile-title {
+    font-size: 34px;
+    margin-bottom: 28px;
+  }
+
+  .profile-card {
+    padding: 22px;
+  }
+
+  .order-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .order-product {
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-title {
+    font-size: 30px;
+  }
+
+  .profile-card {
+    padding: 18px;
+  }
+
+  .order-total {
+    font-size: 20px;
+  }
+}

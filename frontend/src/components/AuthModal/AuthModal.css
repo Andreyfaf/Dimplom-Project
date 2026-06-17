@@ -12,12 +12,17 @@
   z-index: 1000;
 }
 
+.ReactModal__Body--open {
+  overflow: hidden;
+}
+
 .auth-modal {
   background: white;
   width: 450px;
   max-width: 90%;
   border-radius: 12px;
   position: relative;
+  outline: none;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
 }
 
@@ -149,4 +154,34 @@
 
 .auth-toggle-btn:hover {
   color: #004d7a;
+}
+
+@media (max-width: 480px) {
+  .modal-overlay {
+    align-items: flex-start;
+    padding: 20px 12px;
+    overflow-y: auto;
+  }
+
+  .auth-modal {
+    width: 100%;
+    max-width: none;
+  }
+
+  .auth-modal-header,
+  .auth-form-group,
+  .auth-footer {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .auth-error {
+    margin-left: 20px;
+    margin-right: 20px;
+  }
+
+  .auth-submit-btn {
+    margin-left: 20px;
+    margin-right: 20px;
+  }
 }
